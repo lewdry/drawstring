@@ -1,45 +1,51 @@
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
-const splashScreen = document.createElement('div');
+const splashScreen = document.getElementById('splashScreen');
+const footerLabel = document.getElementById('footerLabel');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const lineWidth = 4; // Line thickness, you can adjust this value
 
-// Create splash screen
-splashScreen.id = 'splashScreen';
-splashScreen.innerHTML = `
-    <div>
-        <p>Welcome to Drawstring.</p>
-        <p>A mobile sketchpad.</p>
-        <p>Touch to draw.</p>
-        <p>Colours are random.</p>
-        <p>Multi-touch supported.</p>
-        <p>Double-tap to clear.</p>
-        <p>Screenshot to save.</p>
-        <p>Touch to start drawing.</p>
-    </div>
-`;
-document.body.appendChild(splashScreen);
-
-let splashScreenVisible = true;
+let splashScreenVisible = false;
 let ongoingTouches = [];
 let drawing = false;
 
-// Show splash screen initially
-splashScreen.style.display = 'flex';
-
-// Hide splash screen after 3 seconds
-setTimeout(() => {
+// Toggle splash screen visibility
+function toggleSplashScreen() {
     if (splashScreenVisible) {
         splashScreen.style.display = 'none';
         splashScreenVisible = false;
-        canvas.addEventListener('touchstart', handleStart, false);
-        canvas.addEventListener('mousedown', handleMouseDown, false);
+    } else {
+        splashScreen.style.display = 'flex';
+        splashScreenVisible = true;
+        // Hide splash screen after 3 seconds
+        setTimeout(() => {
+            if (splashScreenVisible) {
+                splashScreen.style.display = 'none';
+                splashScreenVisible = false;
+            }
+        }, 3000);
     }
-}, 3000);
+}
 
+// Initial interaction to show the splash screen
+function showSplashScreen() {
+    if (!splashScreenVisible) {
+        splashScreen.style.display = 'flex';
+        splashScreenVisible = true;
+        // Hide splash screen after 3 seconds
+        setTimeout(() => {
+            if (splashScreenVisible) {
+                splashScreen.style.display = 'none';
+                splashScreenVisible = false;
+            }
+        }, 3000);
+    }
+}
+
+// Event listeners for touch and mouse events
 function handleStart(evt) {
     evt.preventDefault();
 
@@ -178,7 +184,7 @@ function ongoingTouchIndexById(idToFind) {
     return -1;  // Not found
 }
 
-// Add event listeners
+// Add event listeners for drawing
 canvas.addEventListener('touchstart', handleStart, false);
 canvas.addEventListener('mousedown', handleMouseDown, false);
 canvas.addEventListener('touchmove', handleMove, false);
@@ -188,3 +194,6 @@ canvas.addEventListener('mouseup', handleMouseUp, false);
 canvas.addEventListener('touchcancel', handleCancel, false);
 canvas.addEventListener('touchstart', handleDoubleTap, false);
 canvas.addEventListener('dblclick', handleDoubleTap, false);
+
+// Add event listener for footer label click
+footerLabel.addEventListener('click', toggleSplashScreen);
