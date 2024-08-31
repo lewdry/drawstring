@@ -6,11 +6,28 @@ const footerLabel = document.getElementById('footerLabel');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const lineWidth = 4; // Line thickness, you can adjust this value
+const lineWidth = 10; // Line thickness, you can adjust this value
 
 let splashScreenVisible = false;
 let ongoingTouches = [];
 let drawing = false;
+
+// Create and append the splash screen content
+function createSplashScreenContent() {
+    splashScreen.innerHTML = `
+        <div>
+            <p>this is drawstring,</p>
+            <p>a mobile sketchpad.</p>
+            <p>touch to draw.</p>
+            <p>colours are random.</p>
+            <p>multi-touch works.</p>
+            <p>double-tap to clear.</p>
+            <p>screenshot to save.</p>
+            <p>touch to start drawing.</p>
+        </div>
+    `;
+}
+createSplashScreenContent();
 
 // Toggle splash screen visibility
 function toggleSplashScreen() {
@@ -197,3 +214,6 @@ canvas.addEventListener('dblclick', handleDoubleTap, false);
 
 // Add event listener for footer label click
 footerLabel.addEventListener('click', toggleSplashScreen);
+
+// Show splash screen on page load
+window.addEventListener('load', showSplashScreen);
