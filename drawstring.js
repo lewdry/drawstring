@@ -8,19 +8,19 @@ canvas.height = window.innerHeight;
 const lineWidth = 4; // Line thickness
 let ongoingTouches = [];
 
-// Show splash screen and hide after 3 seconds
+// Show splash screen and hide after 5 seconds
 function showSplashScreen() {
     splashScreen.style.display = 'flex';
     startCountdown();
     setTimeout(() => {
         splashScreen.style.display = 'none';
-    }, 3000);
+    }, 5000);
 }
 
 // Countdown functionality
 function startCountdown() {
     const countdownElement = document.getElementById('countdown');
-    let countdown = 3; // Start from 3 seconds
+    let countdown = 5; // Start from 5 seconds
 
     countdownElement.textContent = `Starting in ${countdown}...`;
 
