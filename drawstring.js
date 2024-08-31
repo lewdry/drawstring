@@ -1,9 +1,24 @@
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
+const splashScreen = document.createElement('div');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+// Create splash screen
+splashScreen.id = 'splashScreen';
+splashScreen.innerHTML = `
+    <div>
+        <p>Welcome to drawstring, a randomly coloured sketchpad.</p>
+        <p>Touch and drag to draw.</p>
+        <p>Multi-touch supported.</p>
+        <p>Screenshot anything you want to keep.</p>
+        <p>Double tap to clear.</p>
+    </div>
+`;
+document.body.appendChild(splashScreen);
+
+// Handle drawing functionality
 const lineWidth = 10;
 let ongoingTouches = [];
 
@@ -22,6 +37,9 @@ function handleStart(evt) {
         });
         drawLine(touch.pageX, touch.pageY, touch.pageX, touch.pageY, color);
     }
+
+    // Remove splash screen on first touch
+    splashScreen.style.display = 'none';
 }
 
 function handleMove(evt) {
