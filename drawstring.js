@@ -15,7 +15,7 @@ function createSplashScreenContent() {
     splashScreen.innerHTML = `
         <div>
             <p>this is drawstring,</p>
-            <p>a mobile sketchpad.</p>
+            <p>a simple sketchpad.</p>
             <p>touch to draw.</p>
             <p>colours are random.</p>
             <p>double-tap to clear.</p>
