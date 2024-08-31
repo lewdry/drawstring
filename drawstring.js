@@ -22,7 +22,7 @@ function startCountdown() {
     const countdownElement = document.getElementById('countdown');
     let countdown = 5; // Start from 5 seconds
 
-    countdownElement.textContent = `Starting in ${countdown}...`;
+    countdownElement.textContent = `starting in ${countdown}...`;
 
     const interval = setInterval(() => {
         countdown--;
