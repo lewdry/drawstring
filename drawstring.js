@@ -22,7 +22,7 @@ splashScreen.innerHTML = `
 document.body.appendChild(splashScreen);
 
 // Handle drawing functionality
-const lineWidth = 10;
+const lineWidth = 6;
 let ongoingTouches = [];
 let splashScreenVisible = true;
 
