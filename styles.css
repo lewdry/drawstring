@@ -28,3 +28,12 @@ canvas {
     text-align: center;
     z-index: 1; /* Ensure it is on top of other elements */
 }
+
+#footerLabel {
+    position: fixed;
+    bottom: 10px; /* Adjust distance from the bottom */
+    right: 10px;  /* Adjust distance from the right */
+    font-size: 4px; /* Adjust font size if needed */
+    color: black;  /* Text color */
+    font-family: Arial, sans-serif;
+}
