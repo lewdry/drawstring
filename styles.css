@@ -15,7 +15,7 @@ canvas {
 
 /* Splash screen styles */
 #splashScreen {
-    display: none; /* Testing none */
+    display: flex; /* Testing flex */
     position: fixed;
     top: 0;
     left: 0;
