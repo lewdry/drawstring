@@ -15,7 +15,7 @@ createSplashScreenContent();
 // Update the countdown every second
 function startCountdown() {
     const countdownElement = document.getElementById('countdown');
-    let countdown = 5; // Start from 5 seconds
+    let countdown = 4; // Start from 4 seconds
 
     countdownElement.textContent = `starting in ${countdown}...`;
 
@@ -36,7 +36,7 @@ function showSplashScreen() {
     startCountdown();
     setTimeout(() => {
         splashScreen.style.display = 'none';
-    }, 5000);
+    }, 4000);
 }
 
 // Event listeners for touch and mouse events
