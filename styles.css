@@ -13,27 +13,30 @@ canvas {
 }
 
 #splashScreen {
-    position: none;
+    display: none; /* Hide splash screen by default */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: white; /* White background */
-    color: black; /* Black text */
+    background-color: white;
+    color: black;
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: Arial, sans-serif;
-    font-size: 1.5em;
+    font-size: 18px;
     text-align: center;
-    z-index: 1; /* Ensure it is on top of other elements */
+    z-index: 10;
 }
 
 #footerLabel {
     position: fixed;
     bottom: 10px; /* Adjust distance from the bottom */
     right: 10px;  /* Adjust distance from the right */
-    font-size: 4px; /* Adjust font size if needed */
+    font-size: 10px; /* Adjust font size if needed */
     color: black;  /* Text color */
     font-family: Arial, sans-serif;
+    cursor: pointer; /* Change cursor to indicate clickability */
+    z-index: 20; /* Ensure it appears above other content */
 }
