@@ -1,51 +1,100 @@
+// drawstring.js
+
+// Get canvas and context
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
-const splashScreen = document.getElementById('splashScreen');
 
+// Canvas dimensions
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const lineWidth = 4; // Line thickness
+// State variables
+let isDrawing = false;
 let ongoingTouches = [];
+let splashScreenVisible = true;
 
-// Show splash screen and hide after 5 seconds
+// Initialize splash screen
 function showSplashScreen() {
-    splashScreen.style.display = 'flex';
-    startCountdown();
-    setTimeout(() => {
-        splashScreen.style.display = 'none';
-    }, 5000);
-}
-
-// Countdown functionality
-function startCountdown() {
+    document.getElementById('splashScreen').style.display = 'flex';
+    let countdown = 5; // Set countdown to 5 seconds
     const countdownElement = document.getElementById('countdown');
-    let countdown = 5; // Start from 5 seconds
-
-    countdownElement.textContent = `starting in ${countdown}...`;
+    countdownElement.textContent = countdown;
 
     const interval = setInterval(() => {
         countdown--;
-        if (countdown > 0) {
-            countdownElement.textContent = `Starting in ${countdown}...`;
-        } else {
-            countdownElement.textContent = ''; // Clear countdown text
-            clearInterval(interval); // Stop countdown
+        countdownElement.textContent = countdown;
+        if (countdown <= 0) {
+            clearInterval(interval);
+            document.getElementById('splashScreen').style.display = 'none';
+            splashScreenVisible = false;
         }
     }, 1000);
 }
 
-// Draw a line between two points with a random color
-function drawLine(x1, y1, x2, y2) {
-    ctx.strokeStyle = getRandomColor();
-    ctx.lineWidth = lineWidth;
+// Initialize splash screen display
+window.addEventListener('load', () => {
+    showSplashScreen();
+});
+
+// Event handlers
+function handleStart(event) {
+    if (splashScreenVisible) return;
+    isDrawing = true;
+    const { clientX, clientY } = event.changedTouches ? event.changedTouches[0] : event;
     ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
+    ctx.moveTo(clientX, clientY);
+    event.preventDefault();
+}
+
+function handleMove(event) {
+    if (!isDrawing || splashScreenVisible) return;
+    const { clientX, clientY } = event.changedTouches ? event.changedTouches[0] : event;
+    ctx.lineTo(clientX, clientY);
+    ctx.strokeStyle = getRandomColor();
+    ctx.lineWidth = 10;
+    ctx.stroke();
+    event.preventDefault();
+}
+
+function handleEnd(event) {
+    if (splashScreenVisible) return;
+    isDrawing = false;
+    event.preventDefault();
+}
+
+function handleCancel(event) {
+    if (splashScreenVisible) return;
+    isDrawing = false;
+    event.preventDefault();
+}
+
+function handleMouseDown(event) {
+    if (splashScreenVisible) return;
+    isDrawing = true;
+    ctx.beginPath();
+    ctx.moveTo(event.clientX, event.clientY);
+}
+
+function handleMouseMove(event) {
+    if (!isDrawing || splashScreenVisible) return;
+    ctx.lineTo(event.clientX, event.clientY);
+    ctx.strokeStyle = getRandomColor();
+    ctx.lineWidth = 10;
     ctx.stroke();
 }
 
-// Get a random color
+function handleMouseUp(event) {
+    if (splashScreenVisible) return;
+    isDrawing = false;
+}
+
+function handleDoubleTap(event) {
+    if (splashScreenVisible) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    event.preventDefault();
+}
+
+// Helper function to get a random color
 function getRandomColor() {
     const letters = '0123456789ABCDEF';
     let color = '#';
@@ -55,59 +104,21 @@ function getRandomColor() {
     return color;
 }
 
-// Handle touch and mouse events
-function handleStart(event) {
-    const touches = event.changedTouches || [event];
-    for (let i = 0; i < touches.length; i++) {
-        ongoingTouches.push({ x: touches[i].clientX, y: touches[i].clientY });
-    }
-}
+// Add event listeners for drawing
+canvas.addEventListener('touchstart', handleStart, false);
+canvas.addEventListener('mousedown', handleMouseDown, false);
+canvas.addEventListener('touchmove', handleMove, false);
+canvas.addEventListener('mousemove', handleMouseMove, false);
+canvas.addEventListener('touchend', handleEnd, false);
+canvas.addEventListener('mouseup', handleMouseUp, false);
+canvas.addEventListener('touchcancel', handleCancel, false);
+canvas.addEventListener('dblclick', handleDoubleTap, false);
 
-function handleMove(event) {
-    const touches = event.changedTouches || [event];
-    for (let i = 0; i < touches.length; i++) {
-        const index = ongoingTouches.findIndex(t => t.x === touches[i].clientX && t.y === touches[i].clientY);
-        if (index >= 0) {
-            const touch = ongoingTouches[index];
-            drawLine(touch.x, touch.y, touches[i].clientX, touches[i].clientY);
-            touch.x = touches[i].clientX;
-            touch.y = touches[i].clientY;
-        }
-    }
-}
-
-function handleEnd(event) {
-    const touches = event.changedTouches || [event];
-    for (let i = 0; i < touches.length; i++) {
-        ongoingTouches = ongoingTouches.filter(t => t.x !== touches[i].clientX || t.y !== touches[i].clientY);
-    }
-}
-
-// Clear the canvas
-function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-// Event listeners
-canvas.addEventListener('mousedown', handleStart);
-canvas.addEventListener('mousemove', handleMove);
-canvas.addEventListener('mouseup', handleEnd);
-
-canvas.addEventListener('touchstart', handleStart);
-canvas.addEventListener('touchmove', handleMove);
-canvas.addEventListener('touchend', handleEnd);
-
-canvas.addEventListener('dblclick', clearCanvas);
-
-// Show splash screen on page load
-window.addEventListener('load', showSplashScreen);
-
-// Toggle splash screen on click
-document.getElementById('footerLabel').addEventListener('click', () => {
-    if (splashScreen.style.display === 'none' || splashScreen.style.display === '') {
-        splashScreen.style.display = 'flex';
-        startCountdown();
-    } else {
-        splashScreen.style.display = 'none';
+// Add event listener for splash screen toggle
+document.addEventListener('click', function(event) {
+    if (event.target.id === 'footerLabel') {
+        const splashScreen = document.getElementById('splashScreen');
+        splashScreen.style.display = splashScreen.style.display === 'none' ? 'flex' : 'none';
+        splashScreenVisible = splashScreen.style.display === 'flex';
     }
 });
