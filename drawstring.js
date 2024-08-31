@@ -5,7 +5,7 @@ const splashScreen = document.getElementById('splashScreen');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const lineWidth = 4; // Line thickness, you can adjust this value
+const lineWidth = 2; // Line thickness, you can adjust this value
 
 let ongoingTouches = [];
 let drawing = false;
@@ -13,7 +13,7 @@ let drawing = false;
 // Update the countdown every second
 function startCountdown() {
     const countdownElement = document.getElementById('countdown');
-    let countdown = 4; // Start from 4 seconds
+    let countdown = 5; // Start from 5 seconds
 
     countdownElement.textContent = `starting in ${countdown}...`;
 
@@ -28,13 +28,13 @@ function startCountdown() {
     }, 1000);
 }
 
-// Show splash screen and hide after 3 seconds
+// Show splash screen and hide after 5 seconds
 function showSplashScreen() {
     splashScreen.style.display = 'flex';
     startCountdown();
     setTimeout(() => {
         splashScreen.style.display = 'none';
-    }, 4000);
+    }, 5000);
 }
 
 // Event listeners for touch and mouse events
