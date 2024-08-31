@@ -51,7 +51,7 @@ function handleMove(event) {
     const { clientX, clientY } = event.changedTouches ? event.changedTouches[0] : event;
     ctx.lineTo(clientX, clientY);
     ctx.strokeStyle = getRandomColor();
-    ctx.lineWidth = 10;
+    ctx.lineWidth = 4;
     ctx.stroke();
     event.preventDefault();
 }
