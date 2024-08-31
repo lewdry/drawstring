@@ -1,100 +1,168 @@
-// drawstring.js
-
-// Get canvas and context
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
+const splashScreen = document.getElementById('splashScreen');
 
-// Canvas dimensions
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// State variables
-let isDrawing = false;
-let ongoingTouches = [];
-let splashScreenVisible = true;
+const lineWidth = 4; // Line thickness, you can adjust this value
 
-// Initialize splash screen
-function showSplashScreen() {
-    document.getElementById('splashScreen').style.display = 'flex';
-    let countdown = 5; // Set countdown to 5 seconds
+let ongoingTouches = [];
+let drawing = false;
+
+createSplashScreenContent();
+
+// Update the countdown every second
+function startCountdown() {
     const countdownElement = document.getElementById('countdown');
-    countdownElement.textContent = countdown;
+    let countdown = 5; // Start from 5 seconds
+
+    countdownElement.textContent = `starting in ${countdown}...`;
 
     const interval = setInterval(() => {
         countdown--;
-        countdownElement.textContent = countdown;
-        if (countdown <= 0) {
-            clearInterval(interval);
-            document.getElementById('splashScreen').style.display = 'none';
-            splashScreenVisible = false;
+        if (countdown > 0) {
+            countdownElement.textContent = `starting in ${countdown}...`;
+        } else {
+            countdownElement.textContent = ''; // Clear countdown text
+            clearInterval(interval); // Stop countdown
         }
     }, 1000);
 }
 
-// Initialize splash screen display
-window.addEventListener('load', () => {
-    showSplashScreen();
-});
-
-// Event handlers
-function handleStart(event) {
-    if (splashScreenVisible) return;
-    isDrawing = true;
-    const { clientX, clientY } = event.changedTouches ? event.changedTouches[0] : event;
-    ctx.beginPath();
-    ctx.moveTo(clientX, clientY);
-    event.preventDefault();
+// Show splash screen and hide after 3 seconds
+function showSplashScreen() {
+    splashScreen.style.display = 'flex';
+    startCountdown();
+    setTimeout(() => {
+        splashScreen.style.display = 'none';
+    }, 5000);
 }
 
-function handleMove(event) {
-    if (!isDrawing || splashScreenVisible) return;
-    const { clientX, clientY } = event.changedTouches ? event.changedTouches[0] : event;
-    ctx.lineTo(clientX, clientY);
-    ctx.strokeStyle = getRandomColor();
-    ctx.lineWidth = 4;
-    ctx.stroke();
-    event.preventDefault();
+// Event listeners for touch and mouse events
+function handleStart(evt) {
+    evt.preventDefault();
+
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
+    const touches = evt.changedTouches;
+
+    for (let i = 0; i < touches.length; i++) {
+        const touch = touches[i];
+        const color = getRandomColor();
+        ongoingTouches.push({
+            id: touch.identifier,
+            x: touch.pageX,
+            y: touch.pageY,
+            color: color
+        });
+        drawLine(touch.pageX, touch.pageY, touch.pageX, touch.pageY, color);
+    }
 }
 
-function handleEnd(event) {
-    if (splashScreenVisible) return;
-    isDrawing = false;
-    event.preventDefault();
+function handleMouseDown(evt) {
+    evt.preventDefault();
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
+    drawing = true;
+    const color = getRandomColor();
+    ongoingTouches.push({
+        id: 'mouse', // Use a unique identifier for the mouse
+        x: evt.clientX,
+        y: evt.clientY,
+        color: color
+    });
+    drawLine(evt.clientX, evt.clientY, evt.clientX, evt.clientY, color);
 }
 
-function handleCancel(event) {
-    if (splashScreenVisible) return;
-    isDrawing = false;
-    event.preventDefault();
+function handleMove(evt) {
+    evt.preventDefault();
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
+    const touches = evt.changedTouches;
+
+    for (let i = 0; i < touches.length; i++) {
+        const touch = touches[i];
+        const idx = ongoingTouchIndexById(touch.identifier);
+
+        if (idx >= 0) {
+            const color = ongoingTouches[idx].color;
+            drawLine(ongoingTouches[idx].x, ongoingTouches[idx].y, touch.pageX, touch.pageY, color);
+            ongoingTouches[idx].x = touch.pageX;
+            ongoingTouches[idx].y = touch.pageY;
+        }
+    }
 }
 
-function handleMouseDown(event) {
-    if (splashScreenVisible) return;
-    isDrawing = true;
-    ctx.beginPath();
-    ctx.moveTo(event.clientX, event.clientY);
+function handleMouseMove(evt) {
+    evt.preventDefault();
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
+    if (drawing) {
+        const idx = ongoingTouchIndexById('mouse');
+
+        if (idx >= 0) {
+            const color = ongoingTouches[idx].color;
+            drawLine(ongoingTouches[idx].x, ongoingTouches[idx].y, evt.clientX, evt.clientY, color);
+            ongoingTouches[idx].x = evt.clientX;
+            ongoingTouches[idx].y = evt.clientY;
+        }
+    }
 }
 
-function handleMouseMove(event) {
-    if (!isDrawing || splashScreenVisible) return;
-    ctx.lineTo(event.clientX, event.clientY);
-    ctx.strokeStyle = getRandomColor();
-    ctx.lineWidth = 10;
-    ctx.stroke();
+function handleEnd(evt) {
+    evt.preventDefault();
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
+    const touches = evt.changedTouches;
+
+    for (let i = 0; i < touches.length; i++) {
+        const idx = ongoingTouchIndexById(touches[i].identifier);
+        if (idx >= 0) {
+            ongoingTouches.splice(idx, 1);  // Remove it; we're done
+        }
+    }
 }
 
-function handleMouseUp(event) {
-    if (splashScreenVisible) return;
-    isDrawing = false;
+function handleMouseUp(evt) {
+    evt.preventDefault();
+    drawing = false;
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
+    const idx = ongoingTouchIndexById('mouse');
+    if (idx >= 0) {
+        ongoingTouches.splice(idx, 1);  // Remove it; we're done
+    }
 }
 
-function handleDoubleTap(event) {
-    if (splashScreenVisible) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    event.preventDefault();
+function handleCancel(evt) {
+    evt.preventDefault();
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
+    const touches = evt.changedTouches;
+
+    for (let i = 0; i < touches.length; i++) {
+        const idx = ongoingTouchIndexById(touches[i].identifier);
+        ongoingTouches.splice(idx, 1);  // Remove it; we're done
+    }
 }
 
-// Helper function to get a random color
+// Handle double tap (for both touch and mouse)
+function handleDoubleTap(evt) {
+    if (evt.touches && evt.touches.length === 1) {
+        const now = new Date().getTime();
+        const lastTap = canvas.dataset.lastTap || 0;
+        const timeDiff = now - lastTap;
+
+        if (timeDiff < 300 && timeDiff > 0) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        canvas.dataset.lastTap = now;
+    } else if (evt.type === 'dblclick') {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
 function getRandomColor() {
     const letters = '0123456789ABCDEF';
     let color = '#';
@@ -102,6 +170,26 @@ function getRandomColor() {
         color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
+}
+
+function drawLine(x1, y1, x2, y2, color) {
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth; // Line thickness
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.closePath();
+}
+
+function ongoingTouchIndexById(idToFind) {
+    for (let i = 0; i < ongoingTouches.length; i++) {
+        const id = ongoingTouches[i].id;
+        if (id == idToFind) {
+            return i;
+        }
+    }
+    return -1;  // Not found
 }
 
 // Add event listeners for drawing
@@ -112,13 +200,8 @@ canvas.addEventListener('mousemove', handleMouseMove, false);
 canvas.addEventListener('touchend', handleEnd, false);
 canvas.addEventListener('mouseup', handleMouseUp, false);
 canvas.addEventListener('touchcancel', handleCancel, false);
+canvas.addEventListener('touchstart', handleDoubleTap, false);
 canvas.addEventListener('dblclick', handleDoubleTap, false);
 
-// Add event listener for splash screen toggle
-document.addEventListener('click', function(event) {
-    if (event.target.id === 'footerLabel') {
-        const splashScreen = document.getElementById('splashScreen');
-        splashScreen.style.display = splashScreen.style.display === 'none' ? 'flex' : 'none';
-        splashScreenVisible = splashScreen.style.display === 'flex';
-    }
-});
+// Show splash screen on page load
+window.addEventListener('load', showSplashScreen);
