@@ -37,6 +37,5 @@ canvas {
     font-size: 10px; /* Adjust font size if needed */
     color: black;  /* Text color */
     font-family: Arial, sans-serif;
-    cursor: pointer; /* Change cursor to indicate clickability */
     z-index: 20; /* Ensure it appears above other content */
 }
