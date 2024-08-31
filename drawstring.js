@@ -9,22 +9,30 @@ canvas.height = window.innerHeight;
 splashScreen.id = 'splashScreen';
 splashScreen.innerHTML = `
     <div>
-        <p>Welcome to drawstring, a randomly coloured sketchpad.</p>
+        <p>Welcome to Drawstring, a web sketchpad.</p>
         <p>Touch and drag to draw.</p>
+        <p>Colours are random.</p>
         <p>Multi-touch supported.</p>
-        <p>Screenshot anything you want to keep.</p>
         <p>Double tap to clear.</p>
+        <p>Touch screen to start drawing!</p>
     </div>
 `;
 document.body.appendChild(splashScreen);
 
 // Handle drawing functionality
-const lineWidth = 10;
+const lineWidth = 6;
 let ongoingTouches = [];
+let splashScreenVisible = true;
 
 function handleStart(evt) {
     evt.preventDefault();
     const touches = evt.changedTouches;
+
+    if (splashScreenVisible) {
+        // Hide splash screen
+        splashScreen.style.display = 'none';
+        splashScreenVisible = false;
+    }
 
     for (let i = 0; i < touches.length; i++) {
         const touch = touches[i];
@@ -37,9 +45,6 @@ function handleStart(evt) {
         });
         drawLine(touch.pageX, touch.pageY, touch.pageX, touch.pageY, color);
     }
-
-    // Remove splash screen on first touch
-    splashScreen.style.display = 'none';
 }
 
 function handleMove(evt) {
@@ -123,6 +128,7 @@ function ongoingTouchIndexById(idToFind) {
     return -1;  // Not found
 }
 
+// Add event listeners
 canvas.addEventListener('touchstart', handleStart, false);
 canvas.addEventListener('touchmove', handleMove, false);
 canvas.addEventListener('touchend', handleEnd, false);
