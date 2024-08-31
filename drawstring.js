@@ -5,7 +5,7 @@ const splashScreen = document.createElement('div');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const lineWidth = 6; // Line thickness, you can adjust this value
+const lineWidth = 10; // Line thickness, you can adjust this value
 
 // Create splash screen
 splashScreen.id = 'splashScreen';
@@ -27,20 +27,19 @@ let splashScreenVisible = true;
 let ongoingTouches = [];
 let drawing = false;
 
-function handleFirstTouchOrClick(evt) {
-    evt.preventDefault();
+// Show splash screen initially
+splashScreen.style.display = 'flex';
 
+// Hide splash screen after 3 seconds
+setTimeout(() => {
     if (splashScreenVisible) {
-        splashScreen.remove();
+        splashScreen.style.display = 'none';
         splashScreenVisible = false;
-        canvas.removeEventListener('touchstart', handleFirstTouchOrClick);
-        canvas.removeEventListener('mousedown', handleFirstTouchOrClick);
         canvas.addEventListener('touchstart', handleStart, false);
         canvas.addEventListener('mousedown', handleMouseDown, false);
     }
-}
+}, 3000);
 
-// Handle touch start
 function handleStart(evt) {
     evt.preventDefault();
 
@@ -59,7 +58,6 @@ function handleStart(evt) {
     }
 }
 
-// Handle mouse down
 function handleMouseDown(evt) {
     evt.preventDefault();
     drawing = true;
@@ -73,7 +71,6 @@ function handleMouseDown(evt) {
     drawLine(evt.clientX, evt.clientY, evt.clientX, evt.clientY, color);
 }
 
-// Handle touch move
 function handleMove(evt) {
     evt.preventDefault();
     const touches = evt.changedTouches;
@@ -91,7 +88,6 @@ function handleMove(evt) {
     }
 }
 
-// Handle mouse move
 function handleMouseMove(evt) {
     evt.preventDefault();
     if (drawing) {
@@ -106,7 +102,6 @@ function handleMouseMove(evt) {
     }
 }
 
-// Handle touch end
 function handleEnd(evt) {
     evt.preventDefault();
     const touches = evt.changedTouches;
@@ -119,7 +114,6 @@ function handleEnd(evt) {
     }
 }
 
-// Handle mouse up
 function handleMouseUp(evt) {
     evt.preventDefault();
     drawing = false;
@@ -129,7 +123,6 @@ function handleMouseUp(evt) {
     }
 }
 
-// Handle touch cancel
 function handleCancel(evt) {
     evt.preventDefault();
     const touches = evt.changedTouches;
@@ -186,8 +179,8 @@ function ongoingTouchIndexById(idToFind) {
 }
 
 // Add event listeners
-canvas.addEventListener('touchstart', handleFirstTouchOrClick, false);
-canvas.addEventListener('mousedown', handleFirstTouchOrClick, false);
+canvas.addEventListener('touchstart', handleStart, false);
+canvas.addEventListener('mousedown', handleMouseDown, false);
 canvas.addEventListener('touchmove', handleMove, false);
 canvas.addEventListener('mousemove', handleMouseMove, false);
 canvas.addEventListener('touchend', handleEnd, false);
