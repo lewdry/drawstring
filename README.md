@@ -2,7 +2,7 @@
 
 Drawstring is a vanilla JavaScript simple sketchpad. 
 
-It is responsive to any broswer shape and size.
+It is responsive to any browser shape and size.
 
 It is implemented for both touch (mobile) and click (desktop).
 
