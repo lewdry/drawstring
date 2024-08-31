@@ -1,14 +1,12 @@
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
 const splashScreen = document.getElementById('splashScreen');
-const footerLabel = document.getElementById('footerLabel');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const lineWidth = 10; // Line thickness, you can adjust this value
 
-let splashScreenVisible = false;
 let ongoingTouches = [];
 let drawing = false;
 
@@ -20,51 +18,48 @@ function createSplashScreenContent() {
             <p>a mobile sketchpad.</p>
             <p>touch to draw.</p>
             <p>colours are random.</p>
-            <p>multi-touch works.</p>
             <p>double-tap to clear.</p>
             <p>screenshot to save.</p>
-            <p>touch to start drawing.</p>
+            <p>multi-touch works.</p>
+            <p>start drawing in...</p>
+            <p id="countdown"></p>
         </div>
     `;
 }
 createSplashScreenContent();
 
-// Toggle splash screen visibility
-function toggleSplashScreen() {
-    if (splashScreenVisible) {
-        splashScreen.style.display = 'none';
-        splashScreenVisible = false;
-    } else {
-        splashScreen.style.display = 'flex';
-        splashScreenVisible = true;
-        // Hide splash screen after 3 seconds
-        setTimeout(() => {
-            if (splashScreenVisible) {
-                splashScreen.style.display = 'none';
-                splashScreenVisible = false;
-            }
-        }, 3000);
-    }
+// Update the countdown every second
+function startCountdown() {
+    const countdownElement = document.getElementById('countdown');
+    let countdown = 3; // Start from 3 seconds
+
+    countdownElement.textContent = `Starting in ${countdown}...`;
+
+    const interval = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+            countdownElement.textContent = `Starting in ${countdown}...`;
+        } else {
+            countdownElement.textContent = ''; // Clear countdown text
+            clearInterval(interval); // Stop countdown
+        }
+    }, 1000);
 }
 
-// Initial interaction to show the splash screen
+// Show splash screen and hide after 3 seconds
 function showSplashScreen() {
-    if (!splashScreenVisible) {
-        splashScreen.style.display = 'flex';
-        splashScreenVisible = true;
-        // Hide splash screen after 3 seconds
-        setTimeout(() => {
-            if (splashScreenVisible) {
-                splashScreen.style.display = 'none';
-                splashScreenVisible = false;
-            }
-        }, 3000);
-    }
+    splashScreen.style.display = 'flex';
+    startCountdown();
+    setTimeout(() => {
+        splashScreen.style.display = 'none';
+    }, 3000);
 }
 
 // Event listeners for touch and mouse events
 function handleStart(evt) {
     evt.preventDefault();
+
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
 
     const touches = evt.changedTouches;
 
@@ -83,6 +78,8 @@ function handleStart(evt) {
 
 function handleMouseDown(evt) {
     evt.preventDefault();
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
     drawing = true;
     const color = getRandomColor();
     ongoingTouches.push({
@@ -96,6 +93,8 @@ function handleMouseDown(evt) {
 
 function handleMove(evt) {
     evt.preventDefault();
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
     const touches = evt.changedTouches;
 
     for (let i = 0; i < touches.length; i++) {
@@ -113,6 +112,8 @@ function handleMove(evt) {
 
 function handleMouseMove(evt) {
     evt.preventDefault();
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
     if (drawing) {
         const idx = ongoingTouchIndexById('mouse');
 
@@ -127,6 +128,8 @@ function handleMouseMove(evt) {
 
 function handleEnd(evt) {
     evt.preventDefault();
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
     const touches = evt.changedTouches;
 
     for (let i = 0; i < touches.length; i++) {
@@ -140,6 +143,8 @@ function handleEnd(evt) {
 function handleMouseUp(evt) {
     evt.preventDefault();
     drawing = false;
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
     const idx = ongoingTouchIndexById('mouse');
     if (idx >= 0) {
         ongoingTouches.splice(idx, 1);  // Remove it; we're done
@@ -148,6 +153,8 @@ function handleMouseUp(evt) {
 
 function handleCancel(evt) {
     evt.preventDefault();
+    if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
+
     const touches = evt.changedTouches;
 
     for (let i = 0; i < touches.length; i++) {
@@ -211,9 +218,6 @@ canvas.addEventListener('mouseup', handleMouseUp, false);
 canvas.addEventListener('touchcancel', handleCancel, false);
 canvas.addEventListener('touchstart', handleDoubleTap, false);
 canvas.addEventListener('dblclick', handleDoubleTap, false);
-
-// Add event listener for footer label click
-footerLabel.addEventListener('click', toggleSplashScreen);
 
 // Show splash screen on page load
 window.addEventListener('load', showSplashScreen);
