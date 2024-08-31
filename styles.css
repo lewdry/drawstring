@@ -13,7 +13,7 @@ canvas {
 }
 
 #splashScreen {
-    position: fixed;
+    position: none;
     top: 0;
     left: 0;
     width: 100%;
