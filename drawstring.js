@@ -5,7 +5,7 @@ const splashScreen = document.createElement('div');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const lineWidth = 10; // Line thickness, you can adjust this value
+const lineWidth = 4; // Line thickness, you can adjust this value
 
 // Create splash screen
 splashScreen.id = 'splashScreen';
