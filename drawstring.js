@@ -9,11 +9,12 @@ canvas.height = window.innerHeight;
 splashScreen.id = 'splashScreen';
 splashScreen.innerHTML = `
     <div>
-        <p>Welcome to Drawstring, a web sketchpad.</p>
-        <p>Touch and drag to draw.</p>
+        <p>Welcome to Drawstring, a mobile sketchpad.</p>
+        <p>Touch to draw.</p>
         <p>Colours are random.</p>
         <p>Multi-touch supported.</p>
-        <p>Double tap to clear.</p>
+        <p>Double-tap to clear.</p>
+        <p>Screenshot to save.</p>
         <p>Touch screen to start drawing!</p>
     </div>
 `;
