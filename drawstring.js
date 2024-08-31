@@ -73,6 +73,26 @@ function handleMouseDown(evt) {
     drawLine(evt.clientX, evt.clientY, evt.clientX, evt.clientY, color);
 }
 
+function handleTouchStart(event) {
+    event.preventDefault();
+    const currentTime = Date.now();
+    const pos = getEventPos(event);
+
+    if (currentTime - lastInteractionTime < 300) {
+        handleDoubleTap(event);
+    }
+    lastInteractionTime = currentTime;
+
+    // Handle touch start for grabbing
+    for (const ball of balls) {
+        if (ball.checkGrabbed(pos)) {
+            grabbedBall = ball;
+            ball.grabbed = true;
+            break;
+        }
+    }
+}
+
 function handleMove(evt) {
     evt.preventDefault();
     if (splashScreen.style.display === 'flex') return; // Do nothing if splash screen is visible
@@ -146,19 +166,15 @@ function handleCancel(evt) {
 }
 
 // Handle double tap (for both touch and mouse)
-function handleDoubleTap(evt) {
-    if (evt.touches && evt.touches.length === 1) {
-        const now = new Date().getTime();
-        const lastTap = canvas.dataset.lastTap || 0;
-        const timeDiff = now - lastTap;
+function handleDoubleTap(event) {
+    event.preventDefault();
+    const currentTime = Date.now();
 
-        if (timeDiff < 300 && timeDiff > 0) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-        canvas.dataset.lastTap = now;
-    } else if (evt.type === 'dblclick') {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (currentTime - lastInteractionTime < 300) {
+        // This is considered a double tap or double-click
+        resetGame();
     }
+    lastInteractionTime = currentTime;
 }
 
 function getRandomColor() {
