@@ -10,8 +10,6 @@ const lineWidth = 4; // Line thickness, you can adjust this value
 let ongoingTouches = [];
 let drawing = false;
 
-createSplashScreenContent();
-
 // Update the countdown every second
 function startCountdown() {
     const countdownElement = document.getElementById('countdown');
