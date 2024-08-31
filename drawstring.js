@@ -5,10 +5,12 @@ const splashScreen = document.createElement('div');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+const lineWidth = 6; // Line thickness, you can adjust this value
+
 // Create splash screen
 splashScreen.id = 'splashScreen';
 splashScreen.innerHTML = `
-   <div>
+    <div>
         <p>Welcome to Drawstring.</p>
         <p>A mobile sketchpad.</p>
         <p>Touch to draw.</p>
@@ -22,18 +24,23 @@ splashScreen.innerHTML = `
 document.body.appendChild(splashScreen);
 
 let splashScreenVisible = true;
+let ongoingTouches = [];
+let drawing = false;
 
-function handleFirstTouch(evt) {
+function handleFirstTouchOrClick(evt) {
     evt.preventDefault();
 
     if (splashScreenVisible) {
         splashScreen.remove();
         splashScreenVisible = false;
-        canvas.removeEventListener('touchstart', handleFirstTouch);
+        canvas.removeEventListener('touchstart', handleFirstTouchOrClick);
+        canvas.removeEventListener('mousedown', handleFirstTouchOrClick);
         canvas.addEventListener('touchstart', handleStart, false);
+        canvas.addEventListener('mousedown', handleMouseDown, false);
     }
 }
 
+// Handle touch start
 function handleStart(evt) {
     evt.preventDefault();
 
@@ -52,6 +59,21 @@ function handleStart(evt) {
     }
 }
 
+// Handle mouse down
+function handleMouseDown(evt) {
+    evt.preventDefault();
+    drawing = true;
+    const color = getRandomColor();
+    ongoingTouches.push({
+        id: 'mouse', // Use a unique identifier for the mouse
+        x: evt.clientX,
+        y: evt.clientY,
+        color: color
+    });
+    drawLine(evt.clientX, evt.clientY, evt.clientX, evt.clientY, color);
+}
+
+// Handle touch move
 function handleMove(evt) {
     evt.preventDefault();
     const touches = evt.changedTouches;
@@ -69,6 +91,22 @@ function handleMove(evt) {
     }
 }
 
+// Handle mouse move
+function handleMouseMove(evt) {
+    evt.preventDefault();
+    if (drawing) {
+        const idx = ongoingTouchIndexById('mouse');
+
+        if (idx >= 0) {
+            const color = ongoingTouches[idx].color;
+            drawLine(ongoingTouches[idx].x, ongoingTouches[idx].y, evt.clientX, evt.clientY, color);
+            ongoingTouches[idx].x = evt.clientX;
+            ongoingTouches[idx].y = evt.clientY;
+        }
+    }
+}
+
+// Handle touch end
 function handleEnd(evt) {
     evt.preventDefault();
     const touches = evt.changedTouches;
@@ -81,6 +119,17 @@ function handleEnd(evt) {
     }
 }
 
+// Handle mouse up
+function handleMouseUp(evt) {
+    evt.preventDefault();
+    drawing = false;
+    const idx = ongoingTouchIndexById('mouse');
+    if (idx >= 0) {
+        ongoingTouches.splice(idx, 1);  // Remove it; we're done
+    }
+}
+
+// Handle touch cancel
 function handleCancel(evt) {
     evt.preventDefault();
     const touches = evt.changedTouches;
@@ -91,8 +140,9 @@ function handleCancel(evt) {
     }
 }
 
+// Handle double tap (for both touch and mouse)
 function handleDoubleTap(evt) {
-    if (evt.touches.length === 1) {
+    if (evt.touches && evt.touches.length === 1) {
         const now = new Date().getTime();
         const lastTap = canvas.dataset.lastTap || 0;
         const timeDiff = now - lastTap;
@@ -101,6 +151,8 @@ function handleDoubleTap(evt) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
         canvas.dataset.lastTap = now;
+    } else if (evt.type === 'dblclick') {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 }
 
@@ -116,7 +168,7 @@ function getRandomColor() {
 function drawLine(x1, y1, x2, y2, color) {
     ctx.beginPath();
     ctx.strokeStyle = color;
-    ctx.lineWidth = lineWidth;
+    ctx.lineWidth = lineWidth; // Line thickness
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.stroke();
@@ -134,8 +186,12 @@ function ongoingTouchIndexById(idToFind) {
 }
 
 // Add event listeners
-canvas.addEventListener('touchstart', handleFirstTouch, false);
+canvas.addEventListener('touchstart', handleFirstTouchOrClick, false);
+canvas.addEventListener('mousedown', handleFirstTouchOrClick, false);
 canvas.addEventListener('touchmove', handleMove, false);
+canvas.addEventListener('mousemove', handleMouseMove, false);
 canvas.addEventListener('touchend', handleEnd, false);
+canvas.addEventListener('mouseup', handleMouseUp, false);
 canvas.addEventListener('touchcancel', handleCancel, false);
 canvas.addEventListener('touchstart', handleDoubleTap, false);
+canvas.addEventListener('dblclick', handleDoubleTap, false);
