@@ -19,59 +19,54 @@ function hideSplashScreen() {
 function handleStart(evt) {
     evt.preventDefault();
 
+    const touch = evt.type.startsWith('mouse') ? evt : evt.changedTouches[0];
+    const x = touch.clientX;
+    const y = touch.clientY;
+
     if (splashScreenVisible) {
-        const touch = evt.changedTouches ? evt.changedTouches[0] : evt;
-        if (!isInsideSplashScreen(touch.pageX, touch.pageY)) {
+        if (!isInsideSplashScreen(x, y)) {
             hideSplashScreen();
         }
         return;
     }
 
-    const touches = evt.changedTouches || [evt];
-
-    for (let i = 0; i < touches.length; i++) {
-        const touch = touches[i];
-        const color = getRandomColor();
-        ongoingTouches.push({
-            id: touch.identifier || 'mouse',
-            x: touch.pageX,
-            y: touch.pageY,
-            color: color
-        });
-        drawLine(touch.pageX, touch.pageY, touch.pageX, touch.pageY, color);
-    }
+    drawing = true;
+    const color = getRandomColor();
+    ongoingTouches.push({
+        id: touch.identifier || 'mouse',
+        x: x,
+        y: y,
+        color: color
+    });
+    drawLine(x, y, x, y, color);
 }
 
 function handleMove(evt) {
     evt.preventDefault();
-    if (splashScreenVisible) return;
+    if (splashScreenVisible || !drawing) return;
 
-    const touches = evt.changedTouches || [evt];
+    const touch = evt.type.startsWith('mouse') ? evt : evt.changedTouches[0];
+    const x = touch.clientX;
+    const y = touch.clientY;
 
-    for (let i = 0; i < touches.length; i++) {
-        const touch = touches[i];
-        const idx = ongoingTouchIndexById(touch.identifier || 'mouse');
-
-        if (idx >= 0) {
-            const color = ongoingTouches[idx].color;
-            drawLine(ongoingTouches[idx].x, ongoingTouches[idx].y, touch.pageX, touch.pageY, color);
-            ongoingTouches[idx].x = touch.pageX;
-            ongoingTouches[idx].y = touch.pageY;
-        }
+    const idx = ongoingTouchIndexById(touch.identifier || 'mouse');
+    if (idx >= 0) {
+        const color = ongoingTouches[idx].color;
+        drawLine(ongoingTouches[idx].x, ongoingTouches[idx].y, x, y, color);
+        ongoingTouches[idx].x = x;
+        ongoingTouches[idx].y = y;
     }
 }
 
 function handleEnd(evt) {
     evt.preventDefault();
+    drawing = false;
     if (splashScreenVisible) return;
 
-    const touches = evt.changedTouches || [evt];
-
-    for (let i = 0; i < touches.length; i++) {
-        const idx = ongoingTouchIndexById(touches[i].identifier || 'mouse');
-        if (idx >= 0) {
-            ongoingTouches.splice(idx, 1);
-        }
+    const touch = evt.type.startsWith('mouse') ? evt : evt.changedTouches[0];
+    const idx = ongoingTouchIndexById(touch.identifier || 'mouse');
+    if (idx >= 0) {
+        ongoingTouches.splice(idx, 1);
     }
 }
 
@@ -151,7 +146,7 @@ canvas.addEventListener('touchmove', handleMove, false);
 canvas.addEventListener('mousemove', handleMove, false);
 canvas.addEventListener('touchend', handleEnd, false);
 canvas.addEventListener('mouseup', handleEnd, false);
-canvas.addEventListener('touchcancel', handleCancel, false);
+canvas.addEventListener('touchcancel', handleEnd, false);
 canvas.addEventListener('touchstart', handleDoubleTap, false);
 canvas.addEventListener('dblclick', handleDoubleTap, false);
 window.addEventListener('resize', handleResize);
