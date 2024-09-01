@@ -35,11 +35,11 @@ canvas {
     position: fixed;
     top: 0;
     left: 0;
-    margin: 5px;
+    margin: 2px;
     font-size: 16px;
     color: black;
     background-color: white;
-    padding: 5px;
-    border-radius: 5px;
+    padding: 2px;
+    border-radius: 2px;
     z-index: 10;
 }
