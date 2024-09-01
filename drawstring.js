@@ -26,9 +26,7 @@ function handleStart(evt) {
         const y = touch.clientY;
         
         if (splashScreenVisible) {
-            if (!isInsideSplashScreen(x, y)) {
-                hideSplashScreen();
-            }
+            hideSplashScreen();
             return;
         }
 
