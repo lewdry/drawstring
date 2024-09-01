@@ -27,18 +27,19 @@ canvas {
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    border: 2px solid black;
+    border: 1px solid black;
     border-radius: 10px;
 }
 
 #headerLabel {
     position: fixed;
-    bottom: 0;
-    left: 0;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
     margin: 5px;
     font-size: 16px;
     color: black;
-    background-color: white; 
+    background-color: white;
     padding: 5px;
     border-radius: 5px;
     z-index: 10;
