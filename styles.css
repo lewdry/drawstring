@@ -18,7 +18,7 @@ canvas {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 40%;
-    height: 40%;
+    height: 30%;
     background-color: white;
     color: black;
     font-size: 16px;
@@ -34,8 +34,7 @@ canvas {
 #headerLabel {
     position: fixed;
     top: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     margin: 5px;
     font-size: 16px;
     color: black;
