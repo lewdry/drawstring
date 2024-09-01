@@ -26,14 +26,20 @@ function handleStart(evt) {
     if (splashScreenVisible) {
         if (!isInsideSplashScreen(x, y)) {
             hideSplashScreen();
+            // Immediately start drawing after hiding splash screen
+            startDrawing(x, y);
         }
         return;
     }
 
+    startDrawing(x, y);
+}
+
+function startDrawing(x, y) {
     drawing = true;
     const color = getRandomColor();
     ongoingTouches.push({
-        id: touch.identifier || 'mouse',
+        id: 'mouse', // mouse is both click and touch
         x: x,
         y: y,
         color: color
