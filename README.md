@@ -6,6 +6,8 @@ It is responsive to any browser shape and size.
 
 It is implemented for both touch (mobile) and click (desktop).
 
-It can accomodate multi-touch, with upto five fingers on iPhone and eleven on iPad.
+It can accomodate multi-touch, with upto five fingers on iPhone and eleven fingers (or ten and a nose) on iPad.
 
-It is intentionally simple, with no UI to change line weight or colour. Of course, I would say that...
+It is intentionally simple (I would say that), with no UI to change line weight or colour.
+
+Draw here: https://lewdry.github.io/drawstring/
