@@ -31,7 +31,7 @@ canvas {
     border-radius: 10px;
 }
 
-#footerLabel {
+#headerLabel {
     position: fixed;
     bottom: 0;
     left: 0;
