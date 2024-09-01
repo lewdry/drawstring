@@ -4,32 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>drawstring</title>
-    <link rel="stylesheet" href="styles.css"> 
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-        }
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+        canvas { display: block; width: 100%; height: 100%; }
     </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Splash screen HTML (structure only) -->
     <div id="splashScreen">
         <div>
             <p>this is drawstring,<br>a simple sketchpad.</p>
             <p>touch to draw,<br>colours are random.</p>
             <p>double-tap to reset,<br>screenshot to save.</p>
-            <p id="countdown"></p>
+            <p>no choices,<br>no undo.</p>
+            <p>touch to start</p>
         </div>
     </div>
-
     <canvas id="drawingCanvas"></canvas>
     <script src="drawstring.js"></script>
     <div id="footerLabel">drawstring, a simple sketchpad</div>
