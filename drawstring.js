@@ -132,9 +132,20 @@ function drawLine(x1, y1, x2, y2, color) {
     ctx.beginPath();
     ctx.strokeStyle = color;
     ctx.lineWidth = lineWidth;
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
+    ctx.lineCap = "butt";
+
+    if (x1 === x2 && y1 === y2) {
+        // Draw a dot
+        ctx.arc(x1, y1, lineWidth / 2, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+    } else {
+        // Draw a line
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+    }
+
     ctx.closePath();
 }
 
