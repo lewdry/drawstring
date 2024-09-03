@@ -40,8 +40,16 @@ canvas {
     margin: 6px;
     font-size: 16px;
     color: black;
-    background-color: white;
+    background-color: transparent;
     padding: 6px;
     border-radius: 6px;
     z-index: 10;
+
+    /* Make header text unselectable */
+    user-select: none;
+    pointer-events: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+
 }
