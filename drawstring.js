@@ -30,14 +30,14 @@ function handleStart(evt) {
             return;
         }
 
-        const color = getRandomColor();
+        const colour = `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`;
         ongoingTouches.push({
             id: touch.identifier || 'mouse',
             x: x,
             y: y,
-            color: color
+            colour: colour
         });
-        drawLine(x, y, x, y, color);
+        drawLine(x, y, x, y, colour);
     }
 
     drawing = true;
@@ -56,8 +56,8 @@ function handleMove(evt) {
 
         const idx = ongoingTouchIndexById(touch.identifier || 'mouse');
         if (idx >= 0) {
-            const color = ongoingTouches[idx].color;
-            drawLine(ongoingTouches[idx].x, ongoingTouches[idx].y, x, y, color);
+            const colour = ongoingTouches[idx].colour;
+            drawLine(ongoingTouches[idx].x, ongoingTouches[idx].y, x, y, colour);
             ongoingTouches[idx].x = x;
             ongoingTouches[idx].y = y;
         }
@@ -105,39 +105,43 @@ function handleDoubleTap(evt) {
         const lastTap = canvas.dataset.lastTap || 0;
         const timeDiff = now - lastTap;
 
-        if (timeDiff < 300 && timeDiff > 0) {
+        // Get the current tap location
+        const x = evt.touches[0].clientX;
+        const y = evt.touches[0].clientY;
+
+        // Get the last tap location
+        const lastX = parseFloat(canvas.dataset.lastTapX || 0);
+        const lastY = parseFloat(canvas.dataset.lastTapY || 0);
+
+        // Calculate the distance between the current and last tap
+        const distance = Math.sqrt(Math.pow(x - lastX, 2) + Math.pow(y - lastY, 2));
+
+        // Define a threshold for how close the taps need to be (e.g., 30 pixels)
+        const distanceThreshold = 30;
+
+        if (timeDiff < 300 && timeDiff > 0 && distance < distanceThreshold) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
+
+        // Store the current tap time and location
         canvas.dataset.lastTap = now;
+        canvas.dataset.lastTapX = x;
+        canvas.dataset.lastTapY = y;
     } else if (evt.type === 'dblclick') {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 }
 
-function isInsideSplashScreen(x, y) {
-    const rect = splashScreen.getBoundingClientRect();
-    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
-}
-
-function getRandomColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
-
-function drawLine(x1, y1, x2, y2, color) {
+function drawLine(x1, y1, x2, y2, colour) {
     ctx.beginPath();
-    ctx.strokeStyle = color;
+    ctx.strokeStyle = colour;
     ctx.lineWidth = lineWidth;
     ctx.lineCap = "butt";
 
     if (x1 === x2 && y1 === y2) {
         // Draw a dot
         ctx.arc(x1, y1, lineWidth / 2, 0, 2 * Math.PI);
-        ctx.fillStyle = color;
+        ctx.fillStyle = colour;
         ctx.fill();
     } else {
         // Draw a line
@@ -166,8 +170,8 @@ function handleResize() {
 }
 
 // Event listeners
-canvas.addEventListener('touchstart', handleStart, false);
-canvas.addEventListener('mousedown', handleStart, false);
+document.addEventListener('touchstart', handleStart, false);
+document.addEventListener('mousedown', handleStart, false);
 canvas.addEventListener('touchmove', handleMove, false);
 canvas.addEventListener('mousemove', handleMove, false);
 canvas.addEventListener('touchend', handleEnd, false);

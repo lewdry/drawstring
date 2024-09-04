@@ -37,12 +37,12 @@ canvas {
     position: fixed;
     top: 0;
     right: 0;
-    margin: 6px;
+    margin: 3px;
     font-size: 16px;
     color: black;
     background-color: transparent;
-    padding: 6px;
-    border-radius: 6px;
+    padding: 3px;
+    border-radius: 3px;
     z-index: 10;
 
     /* Make header text unselectable */
