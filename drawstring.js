@@ -135,6 +135,7 @@ function handleDoubleTap(evt) {
 
         if (timeDiff < 300 && timeDiff > 0 && distance < distanceThreshold) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            evt.preventDefault();
         }
 
         // Store the current tap time and location
