@@ -170,13 +170,13 @@ function handleResize() {
 }
 
 // Event listeners
-document.addEventListener('touchstart', handleStart, false);
-document.addEventListener('mousedown', handleStart, false);
-canvas.addEventListener('touchmove', handleMove, false);
-canvas.addEventListener('mousemove', handleMove, false);
-canvas.addEventListener('touchend', handleEnd, false);
-canvas.addEventListener('mouseup', handleEnd, false);
-canvas.addEventListener('touchcancel', handleCancel, false);
-canvas.addEventListener('touchstart', handleDoubleTap, false);
+document.addEventListener('pointerdown', handleStart, false);
+canvas.addEventListener('pointermove', handleMove, false);
+canvas.addEventListener('pointerup', handleEnd, false);
+canvas.addEventListener('pointercancel', handleCancel, false);
+
 canvas.addEventListener('dblclick', handleDoubleTap, false);
 window.addEventListener('resize', handleResize);
+
+// Prevent default touch action to avoid scrolling/zooming while interacting with the canvas
+canvas.style.touchAction = 'none';
