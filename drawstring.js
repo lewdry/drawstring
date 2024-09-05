@@ -2,11 +2,25 @@ const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
 const splashScreen = document.getElementById('splashScreen');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const devicePixelRatio = window.devicePixelRatio || 1;
+
+function resizeCanvas() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    // Scale canvas based on the device pixel ratio
+    canvas.width = width * devicePixelRatio;
+    canvas.height = height * devicePixelRatio;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+
+    // Scale the drawing context
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+}
+
+resizeCanvas();
 
 const lineWidth = 2;
-
 let ongoingTouches = [];
 let drawing = false;
 let splashScreenVisible = true;
