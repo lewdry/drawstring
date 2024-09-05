@@ -117,7 +117,7 @@ function handleDoubleTap(evt) {
         const distance = Math.sqrt(Math.pow(x - lastX, 2) + Math.pow(y - lastY, 2));
 
         // Define a threshold for how close the taps need to be (e.g., 30 pixels)
-        const distanceThreshold = 30;
+        const distanceThreshold = 20;
 
         if (timeDiff < 300 && timeDiff > 0 && distance < distanceThreshold) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
