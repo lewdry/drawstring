@@ -113,34 +113,14 @@ function handleCancel(evt) {
 
 function handleDoubleTap(evt) {
     if (splashScreenVisible) return;
-
     if (evt.touches && evt.touches.length === 1) {
         const now = new Date().getTime();
         const lastTap = canvas.dataset.lastTap || 0;
         const timeDiff = now - lastTap;
-
-        // Get the current tap location
-        const x = evt.touches[0].clientX;
-        const y = evt.touches[0].clientY;
-
-        // Get the last tap location
-        const lastX = parseFloat(canvas.dataset.lastTapX || 0);
-        const lastY = parseFloat(canvas.dataset.lastTapY || 0);
-
-        // Calculate the distance between the current and last tap
-        const distance = Math.sqrt(Math.pow(x - lastX, 2) + Math.pow(y - lastY, 2));
-
-        // Define a threshold for how close the taps need to be (e.g., 30 pixels)
-        const distanceThreshold = 20;
-
-        if (timeDiff < 300 && timeDiff > 0 && distance < distanceThreshold) {
+        if (timeDiff < 300 && timeDiff > 0) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
-
-        // Store the current tap time and location
         canvas.dataset.lastTap = now;
-        canvas.dataset.lastTapX = x;
-        canvas.dataset.lastTapY = y;
     } else if (evt.type === 'dblclick') {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
