@@ -8,13 +8,11 @@ function resizeCanvas() {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    // Scale canvas based on the device pixel ratio
     canvas.width = width * devicePixelRatio;
     canvas.height = height * devicePixelRatio;
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
 
-    // Scale the drawing context
     ctx.scale(devicePixelRatio, devicePixelRatio);
 }
 
@@ -24,6 +22,8 @@ const lineWidth = 2;
 let ongoingTouches = [];
 let drawing = false;
 let splashScreenVisible = true;
+let lastTapTime = 0;
+let isDoubleTap = false;
 
 function hideSplashScreen() {
     splashScreen.style.display = 'none';
@@ -32,6 +32,11 @@ function hideSplashScreen() {
 
 function handleStart(evt) {
     evt.preventDefault();
+    if (isDoubleTap) {
+        isDoubleTap = false;
+        return;
+    }
+    
     const touches = evt.changedTouches || [evt];
     
     for (let i = 0; i < touches.length; i++) {
@@ -114,11 +119,10 @@ function handleCancel(evt) {
 function handleDoubleTap(evt) {
     if (splashScreenVisible) return;
 
-    if (evt.touches && evt.touches.length === 1) {
-        const now = new Date().getTime();
-        const lastTap = canvas.dataset.lastTap || 0;
-        const timeDiff = now - lastTap;
+    const now = new Date().getTime();
+    const timeSinceLastTap = now - lastTapTime;
 
+    if (evt.touches && evt.touches.length === 1) {
         // Get the current tap location
         const x = evt.touches[0].clientX;
         const y = evt.touches[0].clientY;
@@ -133,18 +137,21 @@ function handleDoubleTap(evt) {
         // Define a threshold for how close the taps need to be (e.g., 30 pixels)
         const distanceThreshold = 20;
 
-        if (timeDiff < 300 && timeDiff > 0 && distance < distanceThreshold) {
+        if (timeSinceLastTap < 300 && distance < distanceThreshold) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             evt.preventDefault();
+            isDoubleTap = true;
+            setTimeout(() => { isDoubleTap = false; }, 300);
         }
 
-        // Store the current tap time and location
-        canvas.dataset.lastTap = now;
+        // Store the current tap location
         canvas.dataset.lastTapX = x;
         canvas.dataset.lastTapY = y;
     } else if (evt.type === 'dblclick') {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
+
+    lastTapTime = now;
 }
 
 function drawLine(x1, y1, x2, y2, colour) {
