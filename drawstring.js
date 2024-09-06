@@ -24,6 +24,7 @@ let drawing = false;
 let splashScreenVisible = true;
 let lastTapTime = 0;
 let isDoubleTap = false;
+let isFirstTouch = true;
 
 function hideSplashScreen() {
     splashScreen.style.display = 'none';
@@ -39,15 +40,21 @@ function handleStart(evt) {
     
     const touches = evt.changedTouches || [evt];
     
+    if (splashScreenVisible) {
+        hideSplashScreen();
+        isFirstTouch = false;
+        return;
+    }
+
+    if (isFirstTouch) {
+        isFirstTouch = false;
+        return;
+    }
+
     for (let i = 0; i < touches.length; i++) {
         const touch = touches[i];
         const x = touch.clientX;
         const y = touch.clientY;
-        
-        if (splashScreenVisible) {
-            hideSplashScreen();
-            return;
-        }
 
         const colour = `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`;
         ongoingTouches.push({
