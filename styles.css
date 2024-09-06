@@ -20,7 +20,7 @@ canvas {
     background-color: white;
     color: black;
     font-size: 16px;
-    font-family: Verdana, sans-serif;
+    font-family: -apple-system, sans-serif
     text-align: center;
     display: flex;
     justify-content: center;
@@ -40,7 +40,7 @@ canvas {
     right: 0;
     margin: 3px;
     font-size: 16px;
-    font-family: Verdana, sans-serif;
+    font-family: -apple-system, sans-serif
     color: black;
     background-color: transparent;
     padding: 3px;
