@@ -16,7 +16,11 @@ function resizeCanvas() {
     ctx.scale(devicePixelRatio, devicePixelRatio);
 }
 
+// Initial canvas resize
 resizeCanvas();
+
+// Resize canvas when the window is resized
+window.addEventListener('resize', resizeCanvas);
 
 const lineWidth = 2;
 let ongoingTouches = [];
