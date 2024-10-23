@@ -45,6 +45,9 @@ function handleStart(evt) {
     const touches = evt.changedTouches || [evt];
     
     if (splashScreenVisible) {
+        if (evt.target.id !== 'startButton') {
+            return;
+        }
         hideSplashScreen();
         isFirstTouch = false;
         return;
@@ -205,6 +208,11 @@ function handleResize() {
 // Event listeners
 document.addEventListener('touchstart', handleStart, false);
 document.addEventListener('mousedown', handleStart, false);
+
+document.getElementById('startButton').addEventListener('click', handleStart, false);
+    
+
+
 canvas.addEventListener('touchmove', handleMove, false);
 canvas.addEventListener('mousemove', handleMove, false);
 canvas.addEventListener('touchend', handleEnd, false);
