@@ -37,6 +37,7 @@ function hideSplashScreen() {
 
 function handleStart(evt) {
     evt.preventDefault();
+    
     if (isDoubleTap) {
         isDoubleTap = false;
         return;
@@ -45,11 +46,11 @@ function handleStart(evt) {
     const touches = evt.changedTouches || [evt];
     
     if (splashScreenVisible) {
-        if (evt.target.id !== 'startButton') {
-            return;
+        if (evt.target.id === 'startButton') {
+            evt.stopPropagation(); // Stop the event from propagating to the canvas
+            hideSplashScreen();
+            isFirstTouch = false;
         }
-        hideSplashScreen();
-        isFirstTouch = false;
         return;
     }
 
