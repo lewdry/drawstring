@@ -10,7 +10,7 @@ function initFancyMode() {
     
     let drawing = false;
     let currentColor = '#000000';
-    let currentBrushSize = 3;
+    let currentBrushSize = 2;
     let lastX = 0;
     let lastY = 0;
     let history = [];
@@ -96,6 +96,14 @@ function initFancyMode() {
     }
 
     function startDrawing(e) {
+        // Prevent drawing if the event target is a UI element
+        if (e.target.tagName === 'BUTTON' || 
+            e.target.tagName === 'INPUT' || 
+            e.target.closest('#toolbar') ||
+            e.target.closest('#splashScreen')) {
+            return;
+        }
+        
         drawing = true;
         const rect = canvas.getBoundingClientRect();
         const touch = e.touches ? e.touches[0] : e;
@@ -110,6 +118,14 @@ function initFancyMode() {
 
     function draw(e) {
         if (!drawing) return;
+        
+        // Prevent drawing if the event target is a UI element
+        if (e.target.tagName === 'BUTTON' || 
+            e.target.tagName === 'INPUT' || 
+            e.target.closest('#toolbar') ||
+            e.target.closest('#splashScreen')) {
+            return;
+        }
         
         const rect = canvas.getBoundingClientRect();
         const touch = e.touches ? e.touches[0] : e;
@@ -164,24 +180,41 @@ function initFancyMode() {
     });
 
     canvas.addEventListener('touchstart', (e) => {
+        // Don't prevent default for UI elements
+        if (e.target.tagName === 'INPUT' || e.target.closest('#toolbar')) {
+            return;
+        }
         e.preventDefault();
         handleDoubleTap(e);
         startDrawing(e);
     }, { passive: false });
 
     canvas.addEventListener('touchmove', (e) => {
+        // Don't prevent default for UI elements
+        if (e.target.tagName === 'INPUT' || e.target.closest('#toolbar')) {
+            return;
+        }
         e.preventDefault();
         draw(e);
         updateBrushPreview(e);
     }, { passive: false });
 
     canvas.addEventListener('touchend', (e) => {
+        // Don't prevent default for UI elements
+        if (e.target.tagName === 'INPUT' || e.target.closest('#toolbar')) {
+            return;
+        }
         e.preventDefault();
         stopDrawing();
         brushPreview.style.display = 'none';
     }, { passive: false });
 
     colorPicker.addEventListener('input', (e) => {
+        currentColor = e.target.value;
+    });
+
+    // Add change event for better mobile support
+    colorPicker.addEventListener('change', (e) => {
         currentColor = e.target.value;
     });
 

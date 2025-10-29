@@ -56,7 +56,7 @@ function initFancyModeUI() {
     document.getElementById('toolbar').style.display = 'flex';
     
     // Apply fancy mode styles
-    document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    document.body.style.background = 'white';
     document.body.className = 'fancy-mode';
     
     // Initialize fancy drawing functionality
@@ -64,6 +64,32 @@ function initFancyModeUI() {
 }
 
 function handleStart(evt) {
+    // Handle splash screen button clicks first
+    if (splashScreenVisible) {
+        if (evt.target.id === 'simpleButton') {
+            evt.preventDefault();
+            evt.stopPropagation();
+            hideSplashScreen();
+            initSimpleMode();
+            return;
+        } else if (evt.target.id === 'fancyButton') {
+            evt.preventDefault();
+            evt.stopPropagation();
+            hideSplashScreen();
+            initFancyModeUI();
+            return;
+        }
+        // If splash screen is visible but it's not a button click, don't do anything
+        return;
+    }
+    
+    // Check if the event target is a UI element (button, input, etc.) that should not trigger drawing
+    if (evt.target.tagName === 'BUTTON' || 
+        evt.target.tagName === 'INPUT' || 
+        evt.target.closest('#toolbar')) {
+        return; // Don't preventDefault or handle as drawing event
+    }
+    
     evt.preventDefault();
     
     if (isDoubleTap) {
@@ -71,24 +97,10 @@ function handleStart(evt) {
         return;
     }
     
-    const touches = evt.changedTouches || [evt];
-    
-    if (splashScreenVisible) {
-        if (evt.target.id === 'simpleButton') {
-            evt.stopPropagation(); // Stop the event from propagating to the canvas
-            hideSplashScreen();
-            initSimpleMode();
-        } else if (evt.target.id === 'fancyButton') {
-            evt.stopPropagation();
-            hideSplashScreen();
-            initFancyModeUI();
-            return; // Don't continue with simple drawing logic
-        }
-        return;
-    }
-
     // Only continue with simple mode drawing logic if in simple mode
     if (currentMode !== 'simple') return;
+    
+    const touches = evt.changedTouches || [evt];
 
     for (let i = 0; i < touches.length; i++) {
         const touch = touches[i];
@@ -112,6 +124,11 @@ function handleStart(evt) {
 }
 
 function handleMove(evt) {
+    // Don't prevent default for UI elements
+    if (evt.target.tagName === 'INPUT' || evt.target.closest('#toolbar')) {
+        return;
+    }
+    
     evt.preventDefault();
     if (splashScreenVisible || !drawing || currentMode !== 'simple') return;
 
