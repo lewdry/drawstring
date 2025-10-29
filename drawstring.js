@@ -32,10 +32,35 @@ let drawing = false;
 let splashScreenVisible = true;
 let lastTapTime = 0;
 let isDoubleTap = false;
+let currentMode = null; // 'simple' or 'fancy'
 
 function hideSplashScreen() {
     splashScreen.style.display = 'none';
     splashScreenVisible = false;
+}
+
+function initSimpleMode() {
+    currentMode = 'simple';
+    // Hide fancy mode elements
+    document.getElementById('toolbar').style.display = 'none';
+    document.getElementById('brushPreview').style.display = 'none';
+    
+    // Apply simple mode styles
+    document.body.style.background = '';
+    document.body.className = '';
+}
+
+function initFancyModeUI() {
+    currentMode = 'fancy';
+    // Show fancy mode elements
+    document.getElementById('toolbar').style.display = 'flex';
+    
+    // Apply fancy mode styles
+    document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    document.body.className = 'fancy-mode';
+    
+    // Initialize fancy drawing functionality
+    initFancyMode();
 }
 
 function handleStart(evt) {
@@ -49,12 +74,21 @@ function handleStart(evt) {
     const touches = evt.changedTouches || [evt];
     
     if (splashScreenVisible) {
-        if (evt.target.id === 'startButton') {
+        if (evt.target.id === 'simpleButton') {
             evt.stopPropagation(); // Stop the event from propagating to the canvas
             hideSplashScreen();
+            initSimpleMode();
+        } else if (evt.target.id === 'fancyButton') {
+            evt.stopPropagation();
+            hideSplashScreen();
+            initFancyModeUI();
+            return; // Don't continue with simple drawing logic
         }
         return;
     }
+
+    // Only continue with simple mode drawing logic if in simple mode
+    if (currentMode !== 'simple') return;
 
     for (let i = 0; i < touches.length; i++) {
         const touch = touches[i];
@@ -79,7 +113,7 @@ function handleStart(evt) {
 
 function handleMove(evt) {
     evt.preventDefault();
-    if (splashScreenVisible || !drawing) return;
+    if (splashScreenVisible || !drawing || currentMode !== 'simple') return;
 
     const touches = evt.changedTouches || [evt];
     
@@ -103,7 +137,7 @@ function handleMove(evt) {
 
 function handleEnd(evt) {
     evt.preventDefault();
-    if (splashScreenVisible) return;
+    if (splashScreenVisible || currentMode !== 'simple') return;
 
     const touches = evt.changedTouches || [evt];
     
@@ -124,7 +158,7 @@ function handleEnd(evt) {
 
 function handleCancel(evt) {
     evt.preventDefault();
-    if (splashScreenVisible) return;
+    if (splashScreenVisible || currentMode !== 'simple') return;
 
     const touches = evt.changedTouches || [evt];
     
@@ -143,7 +177,7 @@ function handleCancel(evt) {
 }
 
 function handleDoubleTap(evt) {
-    if (splashScreenVisible) return;
+    if (splashScreenVisible || currentMode !== 'simple') return;
 
     const now = new Date().getTime();
     const timeSinceLastTap = now - lastTapTime;
@@ -240,7 +274,8 @@ function setupEventListeners() {
     canvas.addEventListener('touchstart', handleDoubleTap, false);
     
     // Button events
-    document.getElementById('startButton').addEventListener('click', handleStart, false);
+    document.getElementById('simpleButton').addEventListener('click', handleStart, false);
+    document.getElementById('fancyButton').addEventListener('click', handleStart, false);
     
     // Window events
     window.addEventListener('resize', resizeCanvas);
