@@ -2,18 +2,23 @@ const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
 const splashScreen = document.getElementById('splashScreen');
 
-const devicePixelRatio = window.devicePixelRatio || 1;
+// Constants
+const DEVICE_PIXEL_RATIO = window.devicePixelRatio || 1;
+const LINE_WIDTH = 2;
+const DOUBLE_TAP_TIMEOUT = 300;
+const DOUBLE_TAP_DISTANCE_THRESHOLD = 20;
+const MAX_RGB_VALUE = 255;
 
 function resizeCanvas() {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    canvas.width = width * devicePixelRatio;
-    canvas.height = height * devicePixelRatio;
+    canvas.width = width * DEVICE_PIXEL_RATIO;
+    canvas.height = height * DEVICE_PIXEL_RATIO;
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
 
-    ctx.scale(devicePixelRatio, devicePixelRatio);
+    ctx.scale(DEVICE_PIXEL_RATIO, DEVICE_PIXEL_RATIO);
 }
 
 // Initial canvas resize
@@ -22,13 +27,11 @@ resizeCanvas();
 // Resize canvas when the window is resized
 window.addEventListener('resize', resizeCanvas);
 
-const lineWidth = 2;
-let ongoingTouches = [];
+const ongoingTouches = [];
 let drawing = false;
 let splashScreenVisible = true;
 let lastTapTime = 0;
 let isDoubleTap = false;
-let isFirstTouch = true;
 
 function hideSplashScreen() {
     splashScreen.style.display = 'none';
@@ -49,13 +52,7 @@ function handleStart(evt) {
         if (evt.target.id === 'startButton') {
             evt.stopPropagation(); // Stop the event from propagating to the canvas
             hideSplashScreen();
-            isFirstTouch = false;
         }
-        return;
-    }
-
-    if (isFirstTouch) {
-        isFirstTouch = false;
         return;
     }
 
@@ -64,7 +61,10 @@ function handleStart(evt) {
         const x = touch.clientX;
         const y = touch.clientY;
 
-        const colour = `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`;
+        // Validate touch coordinates
+        if (!isValidCoordinate(x) || !isValidCoordinate(y)) continue;
+
+        const colour = `rgb(${Math.floor(Math.random() * MAX_RGB_VALUE)},${Math.floor(Math.random() * MAX_RGB_VALUE)},${Math.floor(Math.random() * MAX_RGB_VALUE)})`;
         ongoingTouches.push({
             id: touch.identifier || 'mouse',
             x: x,
@@ -87,6 +87,9 @@ function handleMove(evt) {
         const touch = touches[i];
         const x = touch.clientX;
         const y = touch.clientY;
+
+        // Validate touch coordinates
+        if (!isValidCoordinate(x) || !isValidCoordinate(y)) continue;
 
         const idx = ongoingTouchIndexById(touch.identifier || 'mouse');
         if (idx >= 0) {
@@ -112,6 +115,8 @@ function handleEnd(evt) {
         }
     }
 
+    // Clean up any orphaned touches and stop drawing if no touches remain
+    cleanupTouches();
     if (ongoingTouches.length === 0) {
         drawing = false;
     }
@@ -128,6 +133,12 @@ function handleCancel(evt) {
         if (idx >= 0) {
             ongoingTouches.splice(idx, 1);
         }
+    }
+
+    // Clean up any orphaned touches
+    cleanupTouches();
+    if (ongoingTouches.length === 0) {
+        drawing = false;
     }
 }
 
@@ -150,13 +161,13 @@ function handleDoubleTap(evt) {
         const distance = Math.sqrt(Math.pow(x - lastX, 2) + Math.pow(y - lastY, 2));
 
         // Define a threshold for how close the taps need to be (e.g., 30 pixels)
-        const distanceThreshold = 20;
+        const distanceThreshold = DOUBLE_TAP_DISTANCE_THRESHOLD;
 
-        if (timeSinceLastTap < 300 && distance < distanceThreshold) {
+        if (timeSinceLastTap < DOUBLE_TAP_TIMEOUT && distance < distanceThreshold) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             evt.preventDefault();
             isDoubleTap = true;
-            setTimeout(() => { isDoubleTap = false; }, 300);
+            setTimeout(() => { isDoubleTap = false; }, DOUBLE_TAP_TIMEOUT);
         }
 
         // Store the current tap location
@@ -172,12 +183,12 @@ function handleDoubleTap(evt) {
 function drawLine(x1, y1, x2, y2, colour) {
     ctx.beginPath();
     ctx.strokeStyle = colour;
-    ctx.lineWidth = lineWidth;
+    ctx.lineWidth = LINE_WIDTH;
     ctx.lineCap = "butt";
 
     if (x1 === x2 && y1 === y2) {
         // Draw a dot
-        ctx.arc(x1, y1, lineWidth / 2, 0, 2 * Math.PI);
+        ctx.arc(x1, y1, LINE_WIDTH / 2, 0, 2 * Math.PI);
         ctx.fillStyle = colour;
         ctx.fill();
     } else {
@@ -190,35 +201,50 @@ function drawLine(x1, y1, x2, y2, colour) {
     ctx.closePath();
 }
 
+function isValidCoordinate(coord) {
+    return typeof coord === 'number' && !isNaN(coord) && isFinite(coord);
+}
+
 function ongoingTouchIndexById(idToFind) {
     for (let i = 0; i < ongoingTouches.length; i++) {
         const id = ongoingTouches[i].id;
-        if (id == idToFind) {
+        if (id === idToFind) {
             return i;
         }
     }
     return -1;
 }
 
-function handleResize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    // Redraw the canvas content if needed
+function cleanupTouches() {
+    // Remove any touches that might have been orphaned
+    for (let i = ongoingTouches.length - 1; i >= 0; i--) {
+        if (!ongoingTouches[i] || !ongoingTouches[i].id) {
+            ongoingTouches.splice(i, 1);
+        }
+    }
 }
 
 // Event listeners
-document.addEventListener('touchstart', handleStart, false);
-document.addEventListener('mousedown', handleStart, false);
-
-document.getElementById('startButton').addEventListener('click', handleStart, false);
+function setupEventListeners() {
+    // Document-level events
+    document.addEventListener('touchstart', handleStart, false);
+    document.addEventListener('mousedown', handleStart, false);
     
+    // Canvas-specific events
+    canvas.addEventListener('touchmove', handleMove, false);
+    canvas.addEventListener('mousemove', handleMove, false);
+    canvas.addEventListener('touchend', handleEnd, false);
+    canvas.addEventListener('mouseup', handleEnd, false);
+    canvas.addEventListener('touchcancel', handleCancel, false);
+    canvas.addEventListener('dblclick', handleDoubleTap, false);
+    canvas.addEventListener('touchstart', handleDoubleTap, false);
+    
+    // Button events
+    document.getElementById('startButton').addEventListener('click', handleStart, false);
+    
+    // Window events
+    window.addEventListener('resize', resizeCanvas);
+}
 
-
-canvas.addEventListener('touchmove', handleMove, false);
-canvas.addEventListener('mousemove', handleMove, false);
-canvas.addEventListener('touchend', handleEnd, false);
-canvas.addEventListener('mouseup', handleEnd, false);
-canvas.addEventListener('touchcancel', handleCancel, false);
-canvas.addEventListener('dblclick', handleDoubleTap, false);
-canvas.addEventListener('touchstart', handleDoubleTap, false);
-window.addEventListener('resize', handleResize);
+// Initialize event listeners
+setupEventListeners();
