@@ -1,27 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Drawstring</title>
-    <link rel="apple-touch-icon" href="draw.png">
-    <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-        canvas { display: block; width: 100%; height: 100%; }
-    </style>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- Primary Meta Tags -->
+<title>Drawstring - A Simple Sketchpad for Drawing and Writing</title>
+<meta name="title" content="Drawstring - A Simple Sketchpad for Drawing and Writing">
+<meta name="description" content="A simple, colourful sketchpad with zero cognitive load. Just start drawing, writing, or playing hangman. Multi-touch support with no menus or settings. Perfect for families.">
+<meta name="keywords" content="simple sketchpad, online drawing app, web drawing tool, multi-touch drawing, digital sketchpad, free drawing app, online whiteboard, drawing for kids">
+<meta name="author" content="Lewis Dryburgh">
+<meta name="robots" content="index, follow">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://drawstring.playpip.games/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://drawstring.playpip.games/">
+<meta property="og:title" content="Drawstring - A Simple Sketchpad for Drawing and Writing">
+<meta property="og:description" content="A simple, colourful sketchpad with zero cognitive load. Just start drawing, writing, or playing hangman. Multi-touch support with no menus or settings.">
+<meta property="og:image" content="https://drawstring.playpip.games/draw.png">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary">
+<meta property="twitter:url" content="https://drawstring.playpip.games/">
+<meta property="twitter:title" content="Drawstring - A Simple Sketchpad for Drawing and Writing">
+<meta property="twitter:description" content="A simple, colourful sketchpad with zero cognitive load. Just start drawing, writing, or playing hangman. Multi-touch support with no menus or settings.">
+<meta property="twitter:image" content="https://drawstring.playpip.games/draw.png">
+
+<!-- Favicons -->
+<link rel="icon" type="image/png" sizes="32x32" href="draw.png">
+<link rel="icon" type="image/png" sizes="16x16" href="draw.png">
+<link rel="apple-touch-icon" sizes="180x180" href="draw.png">
+<link rel="shortcut icon" href="draw.png">
+
+<!-- Styles -->
+<style>
+body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+canvas { display: block; width: 100%; height: 100%; }
+</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="splashScreen">
-        <div>
-            <p>Welcome to Drawstring!<br>A simple sketchpad.</p>
-            <p>Touch or click to draw.<br>Double-tap screen to reset.</p>
-            <p>✍️🧶</p>
-            <button id="startButton">Start</button>
-        </div>
-    </div>
-    <canvas id="drawingCanvas"></canvas>
-    <script src="drawstring.js"></script>
-    <div id="headerLabel">Drawstring</div>
+<div id="splashScreen">
+<div>
+<p>Welcome to Drawstring!<br>A simple sketchpad.</p>
+<p>Touch or click to draw.<br>Double-tap screen to reset.</p>
+<p>✍️🧶</p>
+<button id="startButton">Start</button>
+</div>
+</div>
+<canvas id="drawingCanvas" aria-label="Drawing canvas"></canvas>
+<script src="drawstring.js"></script>
+<div id="headerLabel">Drawstring</div>
 </body>
 </html>
