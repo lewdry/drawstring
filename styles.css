@@ -272,29 +272,49 @@ button:hover {
 
 @media (max-width: 600px) {
   #toolbar {
-    padding: 12px 12px;
-    gap: 12px;
+    padding: 10px 15px;
+    gap: 8px;
   }
   
   .tool-btn {
-    width: 40px;
-    height: 40px;
-    min-height: 44px; /* Ensure minimum touch target size */
-    min-width: 44px;
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+  
+  #toggleToolbar {
+    width: 36px;
+    height: 36px;
   }
   
   #colorPicker {
-    width: 40px;
-    height: 40px;
-    min-height: 44px; /* Ensure minimum touch target size */
-    min-width: 44px;
+    width: 36px;
+    height: 36px;
     /* Improve touch interaction on mobile */
     -webkit-tap-highlight-color: transparent;
   }
   
   #brushSize {
-    width: 80px;
-    /* Increased vertical padding for better touch target without breaking appearance */
-    padding: 19px 0;
+    width: 60px;
+    height: 4px;
+  }
+  
+  #brushSize::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+  }
+  
+  #brushSize::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .divider {
+    height: 24px;
+  }
+  
+  /* Hide some dividers on mobile to save space */
+  .divider:first-of-type {
+    display: none;
   }
 }
