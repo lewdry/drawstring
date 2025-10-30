@@ -64,30 +64,20 @@ function initFancyModeUI() {
 }
 
 function handleStart(evt) {
-    // Handle splash screen button clicks first
-    if (splashScreenVisible) {
-        if (evt.target.id === 'simpleButton') {
-            evt.preventDefault();
-            evt.stopPropagation();
-            hideSplashScreen();
-            initSimpleMode();
-            return;
-        } else if (evt.target.id === 'fancyButton') {
-            evt.preventDefault();
-            evt.stopPropagation();
-            hideSplashScreen();
-            initFancyModeUI();
-            return;
-        }
-        // If splash screen is visible but it's not a button click, don't do anything
-        return;
-    }
-    
     // Check if the event target is a UI element (button, input, etc.) that should not trigger drawing
+    // This must be checked FIRST to prevent any drawing from button touches
     if (evt.target.tagName === 'BUTTON' || 
         evt.target.tagName === 'INPUT' || 
         evt.target.closest('#toolbar')) {
-        return; // Don't preventDefault or handle as drawing event
+        // Don't preventDefault for buttons - let the click event fire normally
+        return;
+    }
+    
+    // Handle splash screen button clicks
+    if (splashScreenVisible) {
+        // If splash screen is visible and it's not a button, don't do anything
+        evt.preventDefault();
+        return;
     }
     
     evt.preventDefault();
@@ -290,9 +280,23 @@ function setupEventListeners() {
     canvas.addEventListener('dblclick', handleDoubleTap, false);
     canvas.addEventListener('touchstart', handleDoubleTap, false);
     
-    // Button events
-    document.getElementById('simpleButton').addEventListener('click', handleStart, false);
-    document.getElementById('fancyButton').addEventListener('click', handleStart, false);
+    // Button events - handle mode selection
+    document.getElementById('simpleButton').addEventListener('click', function(evt) {
+        if (splashScreenVisible) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            hideSplashScreen();
+            initSimpleMode();
+        }
+    }, false);
+    document.getElementById('fancyButton').addEventListener('click', function(evt) {
+        if (splashScreenVisible) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            hideSplashScreen();
+            initFancyModeUI();
+        }
+    }, false);
     
     // Window events
     window.addEventListener('resize', resizeCanvas);

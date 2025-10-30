@@ -8,8 +8,11 @@ function initFancyMode() {
     
     const devicePixelRatio = window.devicePixelRatio || 1;
     
+    // Generate a random color
+    const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+    
     let drawing = false;
-    let currentColor = '#000000';
+    let currentColor = randomColor;
     let currentBrushSize = 2;
     let lastX = 0;
     let lastY = 0;
@@ -39,6 +42,9 @@ function initFancyMode() {
 
     resizeCanvas();
     
+    // Set color picker to the random color
+    colorPicker.value = currentColor;
+    
     // Initialize with white background
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width / devicePixelRatio, canvas.height / devicePixelRatio);
@@ -65,10 +71,14 @@ function initFancyMode() {
             const img = new Image();
             img.src = history[historyStep];
             img.onload = () => {
+                // Reset transform to avoid scaling issues
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = 'white';
-                ctx.fillRect(0, 0, canvas.width / devicePixelRatio, canvas.height / devicePixelRatio);
-                ctx.drawImage(img, 0, 0);
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                // Reapply the scaling
+                ctx.scale(devicePixelRatio, devicePixelRatio);
             };
         }
     }
@@ -225,6 +235,22 @@ function initFancyMode() {
     document.getElementById('undoBtn').addEventListener('click', undo);
     document.getElementById('clearBtn').addEventListener('click', clearCanvas);
     document.getElementById('downloadBtn').addEventListener('click', downloadCanvas);
+
+    // Toggle toolbar minimize/expand
+    const toolbar = document.getElementById('toolbar');
+    const toggleBtn = document.getElementById('toggleToolbar');
+    
+    toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toolbar.classList.toggle('minimized');
+        
+        // Update tooltip and aria-label
+        if (toolbar.classList.contains('minimized')) {
+            toggleBtn.setAttribute('title', 'Expand');
+        } else {
+            toggleBtn.setAttribute('title', 'Minimize');
+        }
+    });
 
     window.addEventListener('resize', resizeCanvas);
 }
