@@ -81,20 +81,94 @@ button:hover {
 }
 
     #fancyButton {
-      background-color: #ffffff;
-      color: #667eea;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      background-size: 200% 200%;
+      color: #ffffff;
       padding: 0.3rem 20px;
       font-size: 16px;
-      border: 2px solid #667eea;
+      font-weight: 600;
+      border: 2px solid #ffffff;
       border-radius: 5px;
       cursor: pointer;
       transition: all 0.25s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      animation: gradientShift 3s ease infinite;
     }
+
+/* Sparkle effect */
+#fancyButton::before {
+  content: '✨';
+  position: absolute;
+  top: 50%;
+  left: -20px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  opacity: 0;
+  animation: sparkleLeft 4s ease-in-out infinite;
+}
+
+#fancyButton::after {
+  content: '✨';
+  position: absolute;
+  top: 50%;
+  right: -20px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  opacity: 0;
+  animation: sparkleRight 4s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes sparkleLeft {
+  0%, 100% {
+    left: -20px;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.5) rotate(0deg);
+  }
+  50% {
+    left: 10%;
+    opacity: 1;
+    transform: translateY(-50%) scale(1) rotate(180deg);
+  }
+}
+
+@keyframes sparkleRight {
+  0%, 100% {
+    right: -20px;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.5) rotate(0deg);
+  }
+  50% {
+    right: 10%;
+    opacity: 1;
+    transform: translateY(-50%) scale(1) rotate(-180deg);
+  }
+}
 
 #fancyButton:hover {
     scale: 1.02;
-    color: #a166ea;
-    border-color: #a166ea;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6), 0 0 30px rgba(240, 147, 251, 0.4);
+    animation: gradientShift 1.5s ease infinite, pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1.05);
+  }
+  50% {
+    transform: scale(1.08);
+  }
 }
 
 /* Fancy mode styles */
@@ -288,6 +362,12 @@ button:hover {
     gap: 8px;
   }
   
+  #toolbar.minimized {
+    padding: 0;
+    width: 36px;
+    height: 36px;
+  }
+  
   .tool-btn {
     width: 36px;
     height: 36px;
@@ -297,6 +377,14 @@ button:hover {
   #toggleToolbar {
     width: 36px;
     height: 36px;
+  }
+  
+  #toolbar.minimized #toggleToolbar {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   #colorPicker {

@@ -219,6 +219,12 @@ function initFancyMode() {
         brushPreview.style.display = 'none';
     }, { passive: false });
 
+    // Add double-click support for desktop
+    canvas.addEventListener('dblclick', (e) => {
+        clearCanvas();
+        e.preventDefault();
+    });
+
     colorPicker.addEventListener('input', (e) => {
         currentColor = e.target.value;
     });
@@ -230,6 +236,21 @@ function initFancyMode() {
 
     brushSize.addEventListener('input', (e) => {
         currentBrushSize = e.target.value;
+    });
+
+    // Prevent double-tap zoom on buttons
+    const buttons = [
+        document.getElementById('undoBtn'),
+        document.getElementById('clearBtn'),
+        document.getElementById('downloadBtn'),
+        document.getElementById('toggleToolbar')
+    ];
+    
+    buttons.forEach(button => {
+        button.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            button.click();
+        }, { passive: false });
     });
 
     document.getElementById('undoBtn').addEventListener('click', undo);
