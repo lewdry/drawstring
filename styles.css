@@ -1,101 +1,104 @@
 /* styles.css */
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  /* Prevent bounce effects on Mac */
 }
 
 canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-    cursor: crosshair;
-    touch-action: none;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
 }
 
 #splashScreen {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    color: black;
-    font-size: 16px;
-    font-family: -apple-system, sans-serif;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    border: 2px solid black;
-    border-radius: 10px;
-    padding: 20px;
-    max-width: 80%;
-    min-width: 200px;
-    width: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  color: black;
+  font-size: 16px;
+  font-family: -apple-system, sans-serif;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  border: 2px solid black;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 80%;
+  min-width: 200px;
+  width: auto;
 }
 
 #headerLabel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    margin: 3px;
-    font-size: 16px;
-    font-family: -apple-system, sans-serif;
-    color: black;
-    background-color: transparent;
-    padding: 3px;
-    border-radius: 3px;
-    z-index: 10;
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin: 3px;
+  font-size: 16px;
+  font-family: -apple-system, sans-serif;
+  color: black;
+  background-color: transparent;
+  padding: 3px;
+  border-radius: 3px;
+  z-index: 10;
 
-    /* Make header text unselectable */
-    user-select: none;
-    pointer-events: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+  /* Make header text unselectable */
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 button {
-    margin-top: 5px;
-    margin-bottom: 15px;
-    padding: 0.3rem 20px;
-    font-size: 16px;
-    color: black;
-    background-color: #ffffff;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.25s;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  padding: 0.3rem 20px;
+  font-size: 16px;
+  color: black;
+  background-color: #ffffff;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.25s;
 }
 
 #simpleButton {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
 button:hover {
-    background-color: #f0f0f0;
-    scale: 1.02;
-    border-color: #999;
+  background-color: #f0f0f0;
+  scale: 1.02;
+  border-color: #999;
 }
 
-    #fancyButton {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      background-size: 200% 200%;
-      color: #ffffff;
-      padding: 0.3rem 20px;
-      font-size: 16px;
-      font-weight: 600;
-      border: 2px solid #ffffff;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.25s, box-shadow 0.2s;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-      animation: gradientShift 3s ease infinite;
-    }
+#fancyButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background-size: 200% 200%;
+  color: #ffffff;
+  padding: 0.3rem 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border: 2px solid #ffffff;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.25s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  animation: gradientShift 3s ease infinite;
+}
 
 /* Sparkle effect */
 #fancyButton::before {
@@ -122,20 +125,26 @@ button:hover {
 }
 
 @keyframes gradientShift {
-  0%, 100% {
+
+  0%,
+  100% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
 }
 
 @keyframes sparkleLeft {
-  0%, 100% {
+
+  0%,
+  100% {
     left: -20px;
     opacity: 0;
     transform: translateY(-50%) scale(0.5) rotate(0deg);
   }
+
   50% {
     left: 10%;
     opacity: 1;
@@ -144,11 +153,14 @@ button:hover {
 }
 
 @keyframes sparkleRight {
-  0%, 100% {
+
+  0%,
+  100% {
     right: -20px;
     opacity: 0;
     transform: translateY(-50%) scale(0.5) rotate(0deg);
   }
+
   50% {
     right: 10%;
     opacity: 1;
@@ -157,15 +169,18 @@ button:hover {
 }
 
 #fancyButton:hover {
-    scale: 1.02;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6), 0 0 30px rgba(240, 147, 251, 0.4);
-    animation: gradientShift 1.5s ease infinite, pulse 1s ease-in-out infinite;
+  scale: 1.02;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6), 0 0 30px rgba(240, 147, 251, 0.4);
+  animation: gradientShift 1.5s ease infinite, pulse 1s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1.05);
   }
+
   50% {
     transform: scale(1.08);
   }
@@ -173,248 +188,282 @@ button:hover {
 
 /* Fancy mode styles */
 @keyframes fadeIn {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }
+
 
 #toolbar {
   position: fixed;
-  bottom: 20px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 15px 25px;
-  border-radius: 50px;
+  background: white;
+  padding: 8px;
+  /* Reduced since groups are gone */
+  border-radius: 12px;
   display: flex;
-  gap: 15px;
+  gap: 8px;
   align-items: center;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.12);
   z-index: 100;
   opacity: 0;
-  animation: slideUp 0.3s ease forwards;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideUp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+  transition: all 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+  min-height: 48px;
+  box-sizing: border-box;
+}
+
+#styleMenu {
+  position: fixed;
+  bottom: 80px;
+  /* Above toolbar */
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  display: none;
+  /* Toggled by JS */
+  flex-direction: column;
+  gap: 12px;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.08),
+    0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 101;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+#styleMenu.visible {
+  display: flex;
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
 }
 
 #toolbar.minimized {
-  padding: 12px;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
+  padding: 8px;
+  border-radius: 12px;
+  /* Squared circle (rounded corners) */
+  width: 48px;
+  height: 48px;
   gap: 0;
   overflow: hidden;
+  align-items: center;
+  justify-content: center;
 }
 
-#toolbar.minimized > *:not(#toggleToolbar) {
-  opacity: 0;
-  pointer-events: none;
-  width: 0;
-  height: 0;
+#toolbar.minimized>*:not(.tool-group) {
+  display: none !important;
+}
+
+/* Hide everything in tool-group except the toggle button when minimized */
+#toolbar.minimized .tool-group>*:not(#toggleToolbar) {
+  display: none !important;
+}
+
+#toolbar.minimized .tool-group {
   margin: 0;
   padding: 0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#toolbar > *:not(#toggleToolbar) {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#toolbar.minimized #toggleToolbar {
-  margin: 0;
-  padding: 0;
-}
-
-@keyframes slideUp {
-  to { opacity: 1; }
-}
-
-.tool-btn {
-  width: 44px;
-  height: 44px;
-  border: none;
-  border-radius: 50%;
-  background: #f0f0f0;
-  cursor: pointer;
-  transition: all 0.2s;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.tool-group,
+.size-group {
+  display: flex;
+  gap: 4px;
+  /* Reduced from 8px */
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  justify-content: center;
+}
+
+.divider-horiz {
+  width: 100%;
+  height: 1px;
+  background: #f0f0f0;
+}
+
+.tool-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* font-size: 1.2rem; removed for SVGs */
   flex-shrink: 0;
-  align-self: center;
   margin: 0;
   padding: 0;
+  color: #555;
+  user-select: none;
 }
 
-#toggleToolbar {
-  transition: transform 0.3s ease;
+.tool-btn svg {
+  pointer-events: none;
+  /* Let clicks pass to button */
 }
 
-#toolbar.minimized #toggleToolbar {
-  transform: rotate(180deg);
+.tool-btn.active {
+  background-color: #f2f7ff;
+  color: #2f80ed;
 }
 
 .tool-btn:hover {
-  background: #e0e0e0;
-  transform: scale(1.1);
+  background-color: #f5f5f5;
+  transform: none;
+  scale: 1;
+}
+
+.tool-btn.active:hover {
+  background-color: #e6efff;
 }
 
 .tool-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
 }
 
-#colorPicker {
-  width: 44px;
-  height: 44px;
-  border: 3px solid white;
-  border-radius: 50%;
+/* Size Buttons */
+.size-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-  -webkit-appearance: none;
-  appearance: none;
-  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  transition: all 0.1s;
+  font-family: -apple-system, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.size-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.size-btn.active {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+/* Color Buttons */
+.color-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  /* Rounded square container */
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0;
-  overflow: hidden;
-  touch-action: manipulation;
-  flex-shrink: 0;
-  align-self: center;
-  margin: 0;
+  transition: background-color 0.1s;
 }
 
-#colorPicker::-webkit-color-swatch-wrapper {
-  padding: 0;
-  border: none;
+.color-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.color-btn.active {
+  background-color: #e8e8e8;
+  /* TLDRAW-like active bg */
+}
+
+/* The actual color circle */
+.color-dot {
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
+  pointer-events: none;
+  /* Removed box-shadow */
 }
 
-#colorPicker::-webkit-color-swatch {
-  border: none;
-  border-radius: 50%;
+#toggleToolbar {
+  width: 32px;
+  height: 32px;
+  font-size: 0.9em;
+  opacity: 0.6;
 }
 
-#colorPicker::-moz-color-swatch {
-  border: none;
-  border-radius: 50%;
-}
-
-#colorPicker:hover {
-  transform: scale(1.1);
-}
-
-#brushSize {
-  width: 100px;
-  height: 6px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: #ddd;
-  border-radius: 3px;
-  outline: none;
-  flex-shrink: 0;
-  align-self: center;
-}
-
-#brushSize::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #667eea;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-#brushSize::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-}
-
-#brushSize::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #667eea;
-  cursor: pointer;
-  border: none;
+#toolbar.minimized #toggleToolbar {
+  width: 100%;
+  height: 100%;
+  transform: rotate(180deg);
 }
 
 .divider {
   width: 1px;
-  height: 30px;
-  background: #ddd;
-  flex-shrink: 0;
-  transition: opacity 0.2s;
-  align-self: center;
+  height: 24px;
+  background: #e0e0e0;
+  margin: 0 4px;
 }
 
-#brushPreview {
-  position: fixed;
-  pointer-events: none;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  z-index: 99;
-  display: none;
-  transform: translate(-50%, -50%);
-}
-
+/* Responsive adjustments */
 @media (max-width: 600px) {
   #toolbar {
-    padding: 10px 15px;
+    bottom: 16px;
+    padding: 6px;
+    gap: 4px;
+    width: auto;
+    /* Shrink to fit */
+    max-width: 95vw;
+  }
+
+  #styleMenu {
+    bottom: 70px;
+    /* On mobile, maybe full width bottom sheet or just floating */
+    width: auto;
+  }
+
+  .color-grid {
+    grid-template-columns: repeat(8, 1fr);
+    /* Keep 8 cols for now */
     gap: 8px;
   }
-  
-  #toolbar.minimized {
-    padding: 0;
-    width: 36px;
-    height: 36px;
+
+  .size-btn {
+    width: 44px;
+    height: 44px;
   }
-  
-  .tool-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
-  }
-  
-  #toggleToolbar {
-    width: 36px;
-    height: 36px;
-  }
-  
-  #toolbar.minimized #toggleToolbar {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  #colorPicker {
-    width: 36px;
-    height: 36px;
-    /* Improve touch interaction on mobile */
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  #brushSize {
-    width: 60px;
-    height: 4px;
-  }
-  
-  #brushSize::-webkit-slider-thumb {
-    width: 16px;
-    height: 16px;
-  }
-  
-  #brushSize::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .divider {
-    height: 24px;
-  }
-  
-  /* Hide some dividers on mobile to save space */
-  .divider:first-of-type {
-    display: none;
+
+  .color-btn {
+    width: 28px;
+    height: 28px;
   }
 }

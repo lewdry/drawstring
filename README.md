@@ -13,13 +13,14 @@ Choose your preferred drawing experience:
 * hassle free, no settings or menus
 
 ### Fancy Mode
-* full-featured drawing with professional tools
-* color picker for precise color selection
-* adjustable brush size (1-50px)
-* undo functionality (up to 20 steps)
-* clear canvas and download artwork
-* smooth brush preview that follows your cursor/finger
-* elegant gradient background and modern UI
+* **Infinite Canvas**: Pan and zoom freely to explore an unlimited creative space.
+* **Vector-Like Objects**: Every stroke is an object. Select, move, and modify them at any time.
+* **Professional Tools**:
+  * **Curated Palette**: 16 designer-selected colors for beautiful results instantly.
+  * **Smart Sizing**: S, M, L, XL brush sizes.
+  * **Selection Tool**: Move and recolor existing strokes.
+* **Pressure Sensitivity**: Supports stylus pressure for natural drawing variance.
+* **Credit**: Fancy Mode UI and interactions heavily inspired by the amazing [tldraw](https://github.com/tldraw/tldraw).
 
 ## Use Cases
 * ephemeral drawing and creative expression
