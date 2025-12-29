@@ -215,6 +215,10 @@ button:hover {
   transition: all 0.3s cubic-bezier(0.2, 0, 0.2, 1);
   min-height: 48px;
   box-sizing: border-box;
+  /* Ensure toolbar stays a single row; allow horizontal scroll on very narrow screens */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  white-space: nowrap;
 }
 
 #styleMenu {
@@ -294,11 +298,13 @@ button:hover {
   /* Reduced from 8px */
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
+  /* Keep tools on a single row; allow the toolbar container to scroll if needed */
+  flex-wrap: nowrap;
 }
 
 .color-grid {
   display: grid;
+  /* 4 columns x 3 rows layout (4×3) */
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   justify-content: center;
@@ -452,8 +458,8 @@ button:hover {
   }
 
   .color-grid {
-    grid-template-columns: repeat(8, 1fr);
-    /* Keep 8 cols for now */
+    /* Keep consistent 4-column layout on mobile (4 columns x 3 rows) */
+    grid-template-columns: repeat(4, 1fr);
     gap: 8px;
   }
 
