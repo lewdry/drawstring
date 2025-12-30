@@ -447,6 +447,12 @@ function initFancyMode() {
         }
     });
 
+    // Close menu when touching canvas (mobile)
+    canvas.addEventListener('touchstart', () => {
+        styleMenu.classList.remove('visible');
+        toggleStylesBtn.classList.remove('active');
+    }, { passive: true });
+
     function updatePreview() {
         previewDot.style.backgroundColor = currentColor;
         // Optionally update size of preview dot based on brush size?
@@ -507,19 +513,41 @@ function initFancyMode() {
     });
 
     ui.downloadBtn.addEventListener('click', () => {
-        // Export viewport using toBlob for better performance (works best on server)
+        // Export viewport using toBlob for better performance
         canvas.toBlob((blob) => {
             if (!blob) return;
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.download = `drawstring-${Date.now()}.png`;
-            link.href = url;
-            document.body.appendChild(link); // Required for Chrome to respect filename
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+
+            // Check if Web Share API is supported
+            if (navigator.share) {
+                const file = new File([blob], `drawstring-${Date.now()}.png`, { type: 'image/png' });
+                navigator.share({
+                    files: [file],
+                    title: 'Drawstring',
+                    text: 'My drawing from Drawstring'
+                }).catch((err) => {
+                    // User cancelled or share failed, fallback to download
+                    if (err.name !== 'AbortError') {
+                        console.error('Share failed:', err);
+                        fallbackDownload(blob);
+                    }
+                });
+            } else {
+                // Fallback to download if Web Share API is not supported
+                fallbackDownload(blob);
+            }
         }, 'image/png');
     });
+
+    function fallbackDownload(blob) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = `drawstring-${Date.now()}.png`;
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
 
     ui.toggleBtn.addEventListener('click', () => {
         ui.toolbar.classList.toggle('minimized');

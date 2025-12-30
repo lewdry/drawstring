@@ -16,7 +16,7 @@ Choose your preferred drawing experience:
 * **Infinite Canvas**: Pan and zoom freely to explore an unlimited creative space.
 * **Vector-Like Objects**: Every stroke is an object. Select, move, and modify them at any time.
 * **Professional Tools**:
-  * **Curated Palette**: 16 designer-selected colors for beautiful results instantly.
+  * **Curated Palette**: 12 designer-selected colors for beautiful results instantly.
   * **Smart Sizing**: S, M, L, XL brush sizes.
   * **Selection Tool**: Move and recolor existing strokes.
 * **Pressure Sensitivity**: Supports stylus pressure for natural drawing variance.
@@ -36,7 +36,7 @@ Drawstring offers the best of both worlds: intentional simplicity and powerful f
 ## Saving Your Drawings
 **Simple Mode:** No built-in save feature. You can save your creations by taking a screenshot on your device.
 
-**Fancy Mode:** Built-in download feature lets you save your artwork as high-quality PNG files with a single tap.
+**Fancy Mode:** Built-in download feature lets you share or save your artwork as high-quality PNG files with a single tap.
 
 ## Technical Info
 * Built in vanilla JavaScript with HTML5 Canvas
