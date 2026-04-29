@@ -5,8 +5,6 @@ function initFancyMode() {
     const brushPreview = document.getElementById('brushPreview');
 
     const ui = {
-        toolDraw: document.getElementById('toolDraw'),
-        toolSelect: document.getElementById('toolSelect'),
         undoBtn: document.getElementById('undoBtn'),
         clearBtn: document.getElementById('clearBtn'),
         downloadBtn: document.getElementById('downloadBtn'),
@@ -16,7 +14,6 @@ function initFancyMode() {
 
     // State
     let shapes = []; // Array of shape objects
-    let selectedShapeIds = new Set();
     let history = [];
     let historyStep = -1;
 
@@ -26,15 +23,13 @@ function initFancyMode() {
     // Interaction State
     let isDragging = false;
     let isPanning = false;
-    let hasMoved = false; // Track if selection was actually moved
     let lastPointer = { x: 0, y: 0 };
     let activeStroke = null; // The stroke currently being drawn
-    let activeTool = 'draw'; // 'draw' or 'select'
 
     // Pick random initial color (skip first 3: black, grey, light grey)
     // We'll set this properly after DOM init
     let currentColor = '#000000';
-    let currentBrushSize = 2;
+    let currentBrushSize = 8;
 
     // Constants
     const ZOOM_min = 0.1;
@@ -86,16 +81,16 @@ function initFancyMode() {
 
         // Draw Shapes
         for (const shape of shapes) {
-            drawShape(ctx, shape, selectedShapeIds.has(shape.id));
+            drawShape(ctx, shape);
         }
 
         // Draw Active Stroke (if any)
         if (activeStroke) {
-            drawShape(ctx, activeStroke, false);
+            drawShape(ctx, activeStroke);
         }
     }
 
-    function drawShape(context, shape, isSelected) {
+    function drawShape(context, shape) {
         if (shape.type === 'stroke') {
             if (shape.points.length < 2) return;
 
@@ -137,55 +132,7 @@ function initFancyMode() {
                 context.lineTo(last.x, last.y);
                 context.stroke();
             }
-
-            // Selection Outline
-            if (isSelected) {
-                context.save();
-                context.lineWidth = 1 / camera.z; // Constant 1px width in screen space
-                context.strokeStyle = '#2f80ed';
-                context.stroke(); // Stroke again with selection color (center)
-                // Bounding box would be better
-                const bounds = getBounds(shape);
-                drawBounds(context, bounds);
-                context.restore();
-            }
         }
-    }
-
-    function getBounds(shape) {
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-        if (shape.type === 'stroke') {
-            for (const p of shape.points) {
-                minX = Math.min(minX, p.x);
-                minY = Math.min(minY, p.y);
-                maxX = Math.max(maxX, p.x);
-                maxY = Math.max(maxY, p.y);
-            }
-            const pad = shape.size / 2;
-            return { x: minX - pad, y: minY - pad, w: maxX - minX + pad * 2, h: maxY - minY + pad * 2 };
-        }
-        return { x: 0, y: 0, w: 0, h: 0 };
-    }
-
-    function drawBounds(context, bounds) {
-        context.strokeStyle = '#2f80ed';
-        context.lineWidth = 1 / camera.z;
-        context.strokeRect(bounds.x, bounds.y, bounds.w, bounds.h);
-    }
-
-    function hitTest(x, y) {
-        // Reverse iterate to hit top-most items first
-        for (let i = shapes.length - 1; i >= 0; i--) {
-            const shape = shapes[i];
-            const bounds = getBounds(shape);
-            // Simple bounding box hit test + padding
-            const padding = 10 / camera.z;
-            if (x >= bounds.x - padding && x <= bounds.x + bounds.w + padding &&
-                y >= bounds.y - padding && y <= bounds.y + bounds.h + padding) {
-                return shape;
-            }
-        }
-        return null;
     }
 
     // --- Interaction ---
@@ -204,57 +151,23 @@ function initFancyMode() {
 
         const worldPos = screenToWorld(e.clientX, e.clientY);
 
-        if (activeTool === 'draw') {
-            isDragging = true;
-            activeStroke = {
-                id: Date.now().toString(36) + Math.random().toString(36).substr(2),
-                type: 'stroke',
-                color: currentColor,
-                size: currentBrushSize,
-                points: [{
-                    x: worldPos.x,
-                    y: worldPos.y,
-                    pressure: e.pressure || 0.5
-                }]
-            };
-            // Deselect all when drawing
-            selectedShapeIds.clear();
-            render();
-        } else if (activeTool === 'select') {
-            hasMoved = false; // Reset move tracking
-            const hit = hitTest(worldPos.x, worldPos.y);
-            if (hit) {
-                if (!e.shiftKey && !selectedShapeIds.has(hit.id)) {
-                    selectedShapeIds.clear();
-                }
-                selectedShapeIds.add(hit.id);
-                isDragging = true;
-                lastPointer = worldPos; // Store WORLD pos for moving shapes
-            } else {
-                // Clicked empty space -> Deselect or start Box Select (future)
-                if (!e.shiftKey) {
-                    selectedShapeIds.clear();
-                }
-                isPanning = true; // Fallback to pan on empty space in select mode? Or box select?
-                // For now, let's just deselect. 
-                // Alternatively, standard behavior: drag background = box select or pan.
-                // Let's make drag background = pan for now to keep it usable.
-                isPanning = true;
-                lastPointer = { x: e.clientX, y: e.clientY };
-            }
-            render();
-        }
+        isDragging = true;
+        canvas.setPointerCapture(e.pointerId);
+        activeStroke = {
+            id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+            type: 'stroke',
+            color: currentColor,
+            size: currentBrushSize,
+            points: [{
+                x: worldPos.x,
+                y: worldPos.y,
+                pressure: e.pressure || 0.5
+            }]
+        };
+        render();
     }
 
     function handlePointerMove(e) {
-        const worldPos = screenToWorld(e.clientX, e.clientY);
-
-        // Update Brush Preview
-        if (activeTool === 'draw') {
-            // Logic to show brush cursor could go here
-            // But DOM cursor is simpler for now
-        }
-
         if (isPanning) {
             const dx = e.clientX - lastPointer.x;
             const dy = e.clientY - lastPointer.y;
@@ -265,63 +178,31 @@ function initFancyMode() {
             return;
         }
 
-        if (!isDragging) return;
+        if (!isDragging || !activeStroke) return;
 
-        if (activeTool === 'draw' && activeStroke) {
-            // Add point
-            // Distance check optional for smoothing, but raw input is fine for now
-            activeStroke.points.push({
-                x: worldPos.x,
-                y: worldPos.y,
-                pressure: e.pressure || 0.5
-            });
-            render();
-        } else if (activeTool === 'select' && selectedShapeIds.size > 0) {
-            // Move selected shapes
-            const dx = worldPos.x - lastPointer.x;
-            const dy = worldPos.y - lastPointer.y;
-
-            if (dx !== 0 || dy !== 0) { // Only mark as moved if there's actual displacement
-                hasMoved = true;
-                for (const shape of shapes) {
-                    if (selectedShapeIds.has(shape.id)) {
-                        // Update all points of the shape
-                        shape.points.forEach(p => {
-                            p.x += dx;
-                            p.y += dy;
-                        });
-                    }
-                }
-                lastPointer = worldPos;
-                render();
-            }
-        }
+        const worldPos = screenToWorld(e.clientX, e.clientY);
+        activeStroke.points.push({
+            x: worldPos.x,
+            y: worldPos.y,
+            pressure: e.pressure || 0.5
+        });
+        render();
     }
 
     function handlePointerUp(e) {
         if (isPanning) {
             isPanning = false;
-            canvas.style.cursor = 'crosshair'; // or default
+            canvas.style.cursor = 'crosshair';
             return;
         }
 
-        if (activeTool === 'draw' && activeStroke) {
-            // Commit stroke directly to shapes
-            // Actually, we push, then save? 
-            // Standard undo: History stack contains snapshots of 'shapes' array.
-
+        if (activeStroke) {
+            canvas.releasePointerCapture(e.pointerId);
             shapes.push(activeStroke);
             activeStroke = null;
-            saveState(); // Save new state
+            saveState();
             isDragging = false;
             render();
-        } else if (activeTool === 'select') {
-            isDragging = false;
-            // Only save if we actually moved something
-            if (selectedShapeIds.size > 0 && hasMoved) {
-                saveState();
-                hasMoved = false; // Reset for next interaction
-            }
         }
     }
 
@@ -370,9 +251,8 @@ function initFancyMode() {
     // --- State Management ---
 
     function saveState() {
-        // Deep copy shapes
-        // Optimization: structural sharing or JSON stringify
-        const snapshot = JSON.stringify(shapes);
+        // Deep copy shapes using structuredClone (faster than JSON stringify/parse)
+        const snapshot = structuredClone(shapes);
 
         // If we are in the middle of history, cut off the future
         if (historyStep < history.length - 1) {
@@ -392,7 +272,7 @@ function initFancyMode() {
     function undo() {
         if (historyStep > 0) {
             historyStep--;
-            shapes = JSON.parse(history[historyStep]);
+            shapes = structuredClone(history[historyStep]);
             render();
         } else if (historyStep === 0) {
             // Clear to empty
@@ -403,15 +283,6 @@ function initFancyMode() {
     }
 
     // --- UI Logic ---
-
-    function setTool(tool) {
-        activeTool = tool;
-        ui.toolDraw.classList.toggle('active', tool === 'draw');
-        ui.toolSelect.classList.toggle('active', tool === 'select');
-        canvas.style.cursor = tool === 'draw' ? 'crosshair' : 'default';
-        selectedShapeIds.clear();
-        render();
-    }
 
     // --- Events & Init ---
 
@@ -468,15 +339,6 @@ function initFancyMode() {
 
             currentColor = btn.dataset.color;
             updatePreview();
-
-            // Update Selection
-            if (selectedShapeIds.size > 0) {
-                shapes.forEach(s => {
-                    if (selectedShapeIds.has(s.id)) s.color = currentColor;
-                });
-                saveState();
-                render();
-            }
         });
     });
 
@@ -488,26 +350,13 @@ function initFancyMode() {
 
             currentBrushSize = parseInt(btn.dataset.size, 10);
             updatePreview();
-
-            // Update Selection
-            if (selectedShapeIds.size > 0) {
-                shapes.forEach(s => {
-                    if (selectedShapeIds.has(s.id)) s.size = currentBrushSize;
-                });
-                saveState();
-                render();
-            }
         });
     });
-
-    ui.toolDraw.addEventListener('click', () => setTool('draw'));
-    ui.toolSelect.addEventListener('click', () => setTool('select'));
 
     ui.undoBtn.addEventListener('click', undo);
 
     ui.clearBtn.addEventListener('click', () => {
         shapes = [];
-        selectedShapeIds.clear();
         saveState();
         render();
     });
@@ -559,21 +408,11 @@ function initFancyMode() {
             e.preventDefault();
             undo();
         }
-        if (e.key === 'Delete' || e.key === 'Backspace') {
-            if (selectedShapeIds.size > 0) {
-                shapes = shapes.filter(s => !selectedShapeIds.has(s.id));
-                selectedShapeIds.clear();
-                saveState();
-                render();
-            }
-        }
-        // Tool shortcuts
-        if (e.key === 'v' || e.key === '1') setTool('select');
-        if (e.key === 'p' || e.key === 'b' || e.key === '2') setTool('draw');
     });
 
     // Initialize
     resizeCanvas();
+    canvas.style.cursor = 'crosshair';
     ui.toolbar.style.display = 'flex'; // Initial show
 
     // Initial State & Random Color

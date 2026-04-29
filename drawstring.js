@@ -279,7 +279,7 @@ function setupEventListeners() {
     canvas.addEventListener('touchcancel', handleCancel, false);
     canvas.addEventListener('dblclick', handleDoubleTap, false);
     canvas.addEventListener('touchstart', handleDoubleTap, false);
-    
+
     // Button events - handle mode selection
     document.getElementById('simpleButton').addEventListener('click', function(evt) {
         if (splashScreenVisible) {
@@ -298,8 +298,6 @@ function setupEventListeners() {
         }
     }, false);
     
-    // Window events
-    window.addEventListener('resize', resizeCanvas);
 }
 
 // Initialize event listeners
