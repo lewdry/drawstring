@@ -21,10 +21,9 @@ function initFancyMode() {
     let camera = { x: 0, y: 0, z: 1 };
 
     // Interaction State
-    let isDragging = false;
     let isPanning = false;
     let lastPointer = { x: 0, y: 0 };
-    let activeStroke = null; // The stroke currently being drawn
+    const activeStrokes = new Map(); // pointerId -> stroke
 
     // Pick random initial color (skip first 3: black, grey, light grey)
     // We'll set this properly after DOM init
@@ -84,9 +83,9 @@ function initFancyMode() {
             drawShape(ctx, shape);
         }
 
-        // Draw Active Stroke (if any)
-        if (activeStroke) {
-            drawShape(ctx, activeStroke);
+        // Draw Active Strokes (one per pointer)
+        for (const stroke of activeStrokes.values()) {
+            drawShape(ctx, stroke);
         }
     }
 
@@ -151,9 +150,8 @@ function initFancyMode() {
 
         const worldPos = screenToWorld(e.clientX, e.clientY);
 
-        isDragging = true;
         canvas.setPointerCapture(e.pointerId);
-        activeStroke = {
+        activeStrokes.set(e.pointerId, {
             id: Date.now().toString(36) + Math.random().toString(36).substr(2),
             type: 'stroke',
             color: currentColor,
@@ -163,7 +161,7 @@ function initFancyMode() {
                 y: worldPos.y,
                 pressure: e.pressure || 0.5
             }]
-        };
+        });
         render();
     }
 
@@ -178,10 +176,11 @@ function initFancyMode() {
             return;
         }
 
-        if (!isDragging || !activeStroke) return;
+        const stroke = activeStrokes.get(e.pointerId);
+        if (!stroke) return;
 
         const worldPos = screenToWorld(e.clientX, e.clientY);
-        activeStroke.points.push({
+        stroke.points.push({
             x: worldPos.x,
             y: worldPos.y,
             pressure: e.pressure || 0.5
@@ -196,12 +195,20 @@ function initFancyMode() {
             return;
         }
 
-        if (activeStroke) {
+        const stroke = activeStrokes.get(e.pointerId);
+        if (stroke) {
             canvas.releasePointerCapture(e.pointerId);
-            shapes.push(activeStroke);
-            activeStroke = null;
+            activeStrokes.delete(e.pointerId);
+            shapes.push(stroke);
             saveState();
-            isDragging = false;
+            render();
+        }
+    }
+
+    function handlePointerCancel(e) {
+        // Discard the stroke without saving (mirrors simple mode's touchcancel)
+        if (activeStrokes.has(e.pointerId)) {
+            activeStrokes.delete(e.pointerId);
             render();
         }
     }
@@ -293,6 +300,7 @@ function initFancyMode() {
     canvas.addEventListener('pointermove', handlePointerMove);
     canvas.addEventListener('pointerup', handlePointerUp);
     canvas.addEventListener('pointerleave', handlePointerUp); // Treat leave as up
+    canvas.addEventListener('pointercancel', handlePointerCancel);
 
     // Wheel
     canvas.addEventListener('wheel', handleWheel, { passive: false });
