@@ -147,7 +147,7 @@ function initFancyMode() {
             canvas.style.cursor = 'grabbing';
             return;
         }
-        if (e.button !== 0) return; // Only left click for tools
+        if (e.button !== 0 && e.pointerType !== 'touch') return; // Allow touch pointers (no button check), only left click for mouse
 
         const worldPos = screenToWorld(e.clientX, e.clientY);
 
